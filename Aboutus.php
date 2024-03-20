@@ -12,8 +12,9 @@ $backgroundImagePath = "../static/images/hotel.png";
     <link rel="stylesheet" href="../stactic/css/style.css" />
     <script src="../static/js/hotel.js"></script>
     <style>
-    .first_section {
+     .first_section {
       background-image: url('<?php echo $backgroundImagePath; ?>');
+
       width: 100%;
       height: 100vh;
       background-size: cover;
@@ -80,7 +81,7 @@ $backgroundImagePath = "../static/images/hotel.png";
         >
       </div>
       <div class="image">
-        <img src="../images/hotel.png" alt="" />
+        <img src="./images/hotel.png" alt="" />
       </div>
     </div>
   </body>

@@ -6,7 +6,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reservation</title>
-  <link rel="stylesheet" href="../static/css/style.css" />
+  <link rel="stylesheet" href="./css/style.css" />
   <style>
     .image img {
       height: 70vh;
@@ -46,7 +46,7 @@
     </nav>
   </div>
   <div class="image">
-    <img src="../static/images/hotel.png" alt="image">
+    <img src="./images/hotel.png" alt="image">
   </div>
  
   <div class="sections">

@@ -1,6 +1,6 @@
 <?php
-include('../static/particials/nav.php');
-$backgroundImagePath = "../static/images/hotel.png";
+include('nav.php');
+$backgroundImagePath = "./images/hotel.png";
 ?>
 <?php
 
@@ -11,7 +11,7 @@ $backgroundImagePath = "../static/images/hotel.png";
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Easybookings</title>
-    <link rel="stylesheet" href="../static/css/style.css" />
+    <link rel="stylesheet" href="./css/style.css" />
     <style>
     .first_section {
       background-image: url('<?php echo $backgroundImagePath; ?>');
@@ -28,7 +28,7 @@ $backgroundImagePath = "../static/images/hotel.png";
 
   </head>
   <body>
-    <div id="includedContent"></div>
+
     
    <div class="first_section">
       <div class="layer1">
@@ -41,7 +41,7 @@ $backgroundImagePath = "../static/images/hotel.png";
         <h2>Hotels near you.!!</h2>
         <div class="card--container">
           <div class="card">
-            <a href="login.php"><img src="../static/images/taleju.jpg" alt="hotel abc" /></a>
+            <a href="login.php"><img src="taleju.jpg" alt="hotel abc" /></a>
             <div class="card--content">
               <a href="login.php"><h2 class="card--title">Taleju Boutique Hotel</h2></a>
               <p class="card--details">Thamel, Kathmandu</p>
@@ -55,7 +55,7 @@ $backgroundImagePath = "../static/images/hotel.png";
         <h2>Most popular Hotels!!</h2>
         <div class="card--container">
           <div class="card">
-            <a href="login.php"><img src="../static/images/kathmandu.jpg" alt="hotel abc" /></a>
+            <a href="login.php"><img src="kathmandu.jpg" alt="hotel abc" /></a>
             <div class="card--content">
               <a href="login.php"><h2 class="card--title">Kathmandu Suite Hotel</h2></a>
               <p class="card--details">Thamel, Kathmandu</p>
@@ -80,5 +80,5 @@ $backgroundImagePath = "../static/images/hotel.png";
   </body>
 </html>
 <?php
-include('../static/particials/footer.php')
+include('footer.php')
 ?>
