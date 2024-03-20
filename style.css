@@ -1,0 +1,291 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+  
+}
+
+/* Style for navbar section start */
+.navigation_bar {
+  padding: 20px;
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.navigation_bar a {
+  text-decoration: none;
+  color: white;
+  transition: color 0.3s ease;
+  font-weight: 800;
+  font-size: 20px;
+  padding: 10px 40px;
+}
+
+.navigation_bar a:hover {
+  color: skyblue;
+}
+
+.navigation_bar ul {
+  list-style-type: none;
+  display: flex;
+  justify-content: center;
+}
+/* style for navbar section end */
+
+/* style for landing page first_section start */
+.first_section {
+  height: 100vh;
+  background-attachment: fixed;
+  background-color: skyblue;
+}
+
+.layer1 {
+  background-color: #313131;
+  opacity: 0.6;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.first_section h1,
+p {
+  font-size: 40px;
+  line-height: 1.5em;
+  color: white;
+}
+
+/* end */
+
+/* style for landing page second_section start */
+.container {
+  flex-wrap: wrap;
+  overflow: hidden;
+  padding: 0 45px;
+}
+.second_section h2 {
+  margin: 20px;
+}
+.card--container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.card {
+  margin: 20px;
+  flex-direction: column;
+  width: 320px;
+  height: 380px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+.card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  padding: 5px;
+}
+.card--content {
+  padding: 0 0 30px 30px;
+}
+
+.card--content p {
+  color: black;
+  font-size: 18px;
+}
+.card--title {
+  margin-left: 0 !important;
+  font-size: 20px;
+}
+.card--details {
+  margin-bottom: 10px;
+}
+.card-link {
+  text-decoration: none;
+  color: black;
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s, color 0.3s;
+}
+.card-link:hover {
+  background-color: #007bffb2;
+  color: #fff;
+}
+
+.card a {
+  text-decoration: none;
+  color: #212121;
+}
+.new i{
+    font-size: 25px;
+  color: white;
+}
+
+/* end */
+
+/* book.html start*/
+.image {
+  height: 60vh;
+  width: 100%;
+  background-image: url("/easybookings/static/images/hotel.png");
+  background-position: center;
+  text-align: center;
+}
+.sections {
+  display: flex;
+  justify-content: space-between;
+  margin: 60px 120px;
+  column-gap: 150px;
+}
+.hotel--info {
+  width: 70%;
+  padding: 50px 0;
+  display: flex;
+  flex-direction: column;
+  row-gap: 33px;
+}
+.button-1 {
+  background-color: #41b728;
+  width: 30%;
+  letter-spacing: 0.04rem;
+  color: white;
+  font-size: 15px;
+}
+.area {
+  margin-top: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+.input {
+  width: 69%;
+}
+.paragraph {
+  color: #343434;
+  font-size: 20px;
+  font-weight: 600;
+}
+.paragraph1 {
+  color: #343434;
+  font-size: 16px;
+  text-align: justify;
+  line-height: 160%;
+}
+
+.list ul {
+  margin-left: 30px;
+}
+
+.list ul {
+  margin-top: 15px;
+}
+.list ul li {
+  padding-bottom: 10px;
+}
+
+.booking {
+  width: 50%;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  border-radius: 15px;
+  padding: 50px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 122vh;
+}
+.form--container {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+}
+
+.reservation {
+  margin-top: 20px;
+}
+.form--container {
+  row-gap: 20px;
+}
+
+.reservation--info,
+input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 16px;
+  box-sizing: border-box;
+  border: none;
+  border-radius: 5px;
+  color: #4d4d4f;
+}
+
+.reservation--info {
+  display: flex;
+  flex-direction: column;
+}
+.first--section h2 {
+  text-align: center;
+  font-family: sans-serif;
+  font-size: 35px;
+  color: #4d4d4f;
+}
+.reservation--info,
+.second--reservation {
+  row-gap: 15px;
+}
+
+.count {
+  display: flex;
+  justify-content: space-between;
+  margin: 10px 0;
+  vertical-align: center;
+}
+.child {
+  margin-top: 20px;
+  width: 30%;
+}
+.number {
+  width: 80%;
+}
+.submit {
+  width: 100%;
+  padding: 13px;
+  background-color: green;
+  color: white;
+  font-size: 20px;
+  border-radius: 10px;
+  border: none;
+  margin-top: 30px;
+  cursor: pointer;
+}
+
+/* book.html end */
+
+/* end of landing page */
+
+/* footer */
+footer {
+  background-color: rgba(88, 157, 236, 0.826);
+  height: 250px;
+  width: 100%;
+  padding: 20px 100px;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* footer start */
+.footer{
+  background-color: #000000;
+  color:#ffffff;
+  text-align:center;
+  padding:20px 0;
+  
+}
+.footer p{
+  font-size:18px;
+}
+/* footer ends */
