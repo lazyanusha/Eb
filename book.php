@@ -1,7 +1,6 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,7 +10,6 @@
     .image img {
       height: 70vh;
       width: 100%;
-
     }
 
     .image {
@@ -100,7 +98,7 @@
       </div>
     </div>
     <div class="booking">
-      <form action="#" class="form--container">
+      <form action="reservation.php" class="form--container" method="post">
         <div class="first--section">
           <h2>Reservation</h2>
         </div>
@@ -167,5 +165,5 @@
 
 </html>
 <?php
-include('../static/particials/footer.php')
+include('footer.php')
   ?>
