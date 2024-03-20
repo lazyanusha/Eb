@@ -18,25 +18,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Verify the password
         if (password_verify($userLoginPassword, $storedHashedPassword)) {
-            // Username and password match
-            echo "<script>alert('Login Successful');</script>";
-            echo "<script>setTimeout(function() { document.querySelector('.alert').remove(); }, 3000);</script>";
-            include 'landing.php';
+            // Password is correct, set session variable and redirect
+            $_SESSION['email'] = $email;
+            header("Location: landing.php");
             exit;
         } else {
-            // Password does not match
-            echo "<script>alert('Invalid username or password');</script>";
-            include 'login.php';
+            // Password does not match, set error message
+            $error_message = "Invalid username or password";
         }
     } else {
-        // User not found
-        echo "<script>alert('Invalid username or password');</script>";
-        include 'login.php';
+        // User not found, set error message
+        $error_message = "Invalid username or password";
     }
 
     // Close prepared statement
     $stmt->close();
 } else {
     // Handle invalid request method
-    echo "Invalid request method!";
+    $error_message = "Invalid request method!";
 }
+
+// Include login page with error message
+include 'login.php';

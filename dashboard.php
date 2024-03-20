@@ -39,7 +39,7 @@
           </li>
           <li>
             <a href="room.php">
-              <div>Rooms</div>
+              <div>Room List</div>
             </a>
           </li>
           <li>

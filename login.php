@@ -12,6 +12,7 @@
       position: relative;
       margin-top: 10px;
     }
+
     .password {
       padding-right: 30px;
     }
@@ -22,6 +23,12 @@
       right: 10px;
       transform: translateY(-50%);
       cursor: pointer;
+    }
+
+    .error-message {
+      color: red;
+      font-size: 14px;
+      margin-top: 5px;
     }
   </style>
 </head>
@@ -36,6 +43,12 @@
         <div class="password-container">
           <input type="password" class="password" placeholder="Enter your password" name="password" required>
           <i class="fas fa-eye-slash togglePassword"></i>
+          <?php if (isset ($error_message)): ?>
+            <div class="error-message">
+              <?php echo $error_message; ?>
+            </div>
+          <?php endif; ?>
+
         </div>
 
         <button type="submit" class="button">Log In</button>
