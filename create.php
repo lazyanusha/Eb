@@ -18,7 +18,8 @@ include 'connection.php';
 //     hotel_password varchar(255) not null,
 //     hotel_address VARCHAR(255) NOT NULL, 
 //     hotel_contact VARCHAR(20) NOT NULL,
-//     description text
+//     description text,
+//     photos blob not null
 // )";
 
 
@@ -57,8 +58,17 @@ include 'connection.php';
 //     fullname VARCHAR(255) NOT NULL,
 //     email VARCHAR(255) NOT NULL UNIQUE,
 //     password VARCHAR(255) NOT NULL,
-//     phone VARCHAR(20)
+//     phone VARCHAR(20),
+//     images blob
 // )";
+
+// $sql = "CREATE TABLE hotel_images (
+//     image_id INT AUTO_INCREMENT PRIMARY KEY,
+//     hotel_id INT,
+//     image_data BLOB,
+//     FOREIGN KEY (hotel_id) REFERENCES hotels(hotel_id)
+// );
+
 
 
 

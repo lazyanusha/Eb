@@ -1,11 +1,22 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reservation</title>
   <link rel="stylesheet" href="./css/style.css" />
+  <!-- Slick Carousel CSS -->
+  <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
+  <!-- Slick Carousel Theme CSS (optional) -->
+  <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" />
+  <!-- jQuery (required by Slick Carousel) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <!-- Slick Carousel JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
   <style>
     .image img {
       height: 70vh;
@@ -13,14 +24,51 @@
     }
 
     .image {
-      margin-bottom: 100px;
+      height: 80vh;
+      margin-bottom: 150px;
+    }
+
+    
+    .slick-prev,
+    .slick-next {
+      position: absolute;
+      top: 50%;
+      z-index: 1;
+      width: 30px;
+      height: 30px;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      transform: translateY(-50%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .slick-prev {
+      left: 10px;
+    }
+
+    .slick-next {
+      right: 10px;
+    }
+
+    .thumbnails {
+      gap: 0;
+    }
+
+    .thumbnails img {
+      height: 50px;
+      width: auto;
+      margin: 5px;
+      cursor: pointer;
     }
   </style>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-</head>
 
 <body>
-<div>
+  <div>
     <nav class="navigation_bar">
       <div class="logo">
         <a href="home.php">EasyBookings</a>
@@ -44,9 +92,24 @@
     </nav>
   </div>
   <div class="image">
-    <img src="./images/hotel.png" alt="image">
+    <div class="carousel-container">
+      <div class="carousel">
+        <div><a href="jampa.jpg"><img src="jampa.jpg" alt="Image 1" loading="lazy"></a></div>
+        <div><a href="logo.png"><img src="logo.png" alt="Image 2" loading="lazy"></a></div>
+        <!-- Add more images as needed -->
+      </div>
+    </div>
+    <!-- Thumbnails Carousel -->
+    <div class="thumbnails-container">
+      <div class="thumbnails">
+        <div><img src="jampa.jpg" alt="Thumbnail 1" loading="lazy"></div>
+        <div><img src="logo.png" alt="Thumbnail 2" loading="lazy"></div>
+        <!-- Add more thumbnail images as needed -->
+      </div>
+    </div>
   </div>
- 
+
+
   <div class="sections">
     <div class="hotel--info">
       <h2>Hotel Name</h2>
@@ -162,8 +225,42 @@
     </div>
   </div>
 </body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+<script>
+  $(document).ready(function () {
+    // Initialize main carousel
+    $('.carousel').slick({
+      dots: false,
+      arrows: true, // Show navigation arrows
+      prevArrow: '<button type="button" class="slick-prev">Previous</button>',
+      nextArrow: '<button type="button" class="slick-next">Next</button>',
+      infinite: true,
+      speed: 500, // Set the speed to 500 milliseconds for smooth sliding
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      asNavFor: '.thumbnails',
+      autoplay: true,
+      autoplaySpeed: 2000
+    });
+
+    // Initialize thumbnail carousel
+    $('.thumbnails').slick({
+      dots: false,
+      arrows: false,
+      infinite: true,
+      speed: 500, // Set the speed to 500 milliseconds for smooth sliding
+      slidesToShow: 5,
+      slidesToScroll: 1,
+      focusOnSelect: true,
+      asNavFor: '.carousel'
+    });
+  });
+</script>
+
+
 
 </html>
 <?php
-include('footer.php')
+include ('footer.php')
   ?>

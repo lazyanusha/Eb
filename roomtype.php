@@ -135,7 +135,7 @@
           <tbody>
             <tr>   
               <td></td>
-               <td><a href="edit.php">abc</a></td>
+               <td></td>
               <td></td>
               <td></td>
               <td></td>
