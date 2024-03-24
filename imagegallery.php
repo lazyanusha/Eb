@@ -70,8 +70,20 @@
 </html>
 
 <?php
+session_start();
+
+// Check if hotel ID is set in session
+if (!isset($_SESSION['hotel_id'])) {
+    echo "Hotel ID is not set in the session.";
+    // You may redirect the user to another page or display an error message
+    exit();
+}
+
+// Retrieve hotel ID from session
+$hotelId = $_SESSION['hotel_id'];
 
 include 'connection.php';
+
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if any file is uploaded
@@ -85,16 +97,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             move_uploaded_file($file_tmp, "uploads/" . $file_name);
 
             // Insert file name into the database
-            $sql = "INSERT INTO hotel_images (image_name) VALUES ('$file_name')";
+            $sql = "INSERT INTO hotel_images (hotel_id, image_name) VALUES (?, ?)";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("ss", $hotelId, $file_name);
 
-            if ($conn->query($sql) === TRUE) {
+            if ($stmt->execute()) {
                 echo "New record created successfully";
             } else {
                 echo "Error: " . $sql . "<br>" . $conn->error;
             }
-
-            $conn->close();
         }
+        $conn->close(); // Close the database connection after the loop
     }
 }
 ?>

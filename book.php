@@ -1,3 +1,93 @@
+<?php
+session_start();
+include 'connection.php';
+
+// Initialize variables
+$hotelName = $hotelLocation = $hotelEmail = $hotelContact = $description = '';
+$services = $rooms = array();
+
+// Check if hotel_id is set in the session
+if (isset ($_SESSION['hotel_id'])) {
+  $hotel_id = $_SESSION['hotel_id'];
+
+  // Retrieve hotel information from the database
+  $sql = "SELECT * FROM hotels WHERE hotel_id = ?";
+  $stmt = mysqli_prepare($conn, $sql);
+  if ($stmt) {
+    mysqli_stmt_bind_param($stmt, "i", $hotel_id);
+    if (mysqli_stmt_execute($stmt)) {
+      $result = mysqli_stmt_get_result($stmt);
+      if ($row = mysqli_fetch_assoc($result)) {
+        // Assign retrieved values to variables
+        $hotelName = $row['hotel_name'];
+        $hotelLocation = $row['hotel_address'];
+        $hotelEmail = $row['hotel_email'];
+        $hotelContact = $row['hotel_contact'];
+        $description = $row['description'];
+      }
+    } else {
+      echo "Error: " . mysqli_error($conn);
+    }
+    mysqli_stmt_close($stmt);
+  } else {
+    echo "Error: " . mysqli_error($conn);
+  }
+
+  // Retrieve services from the database
+  $sql_services = "SELECT * FROM services WHERE hotel_id = ?";
+  $stmt_services = mysqli_prepare($conn, $sql_services);
+  if ($stmt_services) {
+    mysqli_stmt_bind_param($stmt_services, "i", $hotel_id);
+    if (mysqli_stmt_execute($stmt_services)) {
+      $result_services = mysqli_stmt_get_result($stmt_services);
+      while ($row_services = mysqli_fetch_assoc($result_services)) {
+        $services[] = $row_services['service'];
+      }
+    } else {
+      echo "Error: " . mysqli_error($conn);
+    }
+    mysqli_stmt_close($stmt_services);
+  } else {
+    echo "Error: " . mysqli_error($conn);
+  }
+
+  // Retrieve room details from the database
+  $sql_rooms = "SELECT room_type, quantity FROM rooms WHERE hotel_id = ?";
+  $stmt_rooms = mysqli_prepare($conn, $sql_rooms);
+  if ($stmt_rooms) {
+    mysqli_stmt_bind_param($stmt_rooms, "i", $hotel_id);
+    if (mysqli_stmt_execute($stmt_rooms)) {
+      $result_rooms = mysqli_stmt_get_result($stmt_rooms);
+      while ($row_rooms = mysqli_fetch_assoc($result_rooms)) {
+        $rooms[$row_rooms['room_type']] = $row_rooms['quantity'];
+      }
+    } else {
+      echo "Error: " . mysqli_error($conn);
+    }
+    mysqli_stmt_close($stmt_rooms);
+  } else {
+    echo "Error: " . mysqli_error($conn);
+  }
+
+  $sql_images = "SELECT image_name FROM hotel_images WHERE hotel_id = ?";
+  $stmt_images = mysqli_prepare($conn, $sql_images);
+  mysqli_stmt_bind_param($stmt_images, "i", $_SESSION['hotel_id']); // Assuming you have stored hotel_id in session
+  mysqli_stmt_execute($stmt_images);
+  $result_images = mysqli_stmt_get_result($stmt_images);
+
+  // Fetch and store image names in an array
+  $images = array();
+  while ($row_images = mysqli_fetch_assoc($result_images)) {
+    $images[] = $row_images['image_name'];
+  }
+  // Close database connection
+  mysqli_close($conn);
+} else {
+  echo "Hotel ID not found in session.";
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,7 +118,11 @@
       margin-bottom: 150px;
     }
 
-    
+    .p {
+      color: #343434;
+      font-size: 16px;
+    }
+
     .slick-prev,
     .slick-next {
       position: absolute;
@@ -92,138 +186,141 @@
     </nav>
   </div>
   <div class="image">
-    <div class="carousel-container">
-      <div class="carousel">
-        <div><a href="jampa.jpg"><img src="jampa.jpg" alt="Image 1" loading="lazy"></a></div>
-        <div><a href="logo.png"><img src="logo.png" alt="Image 2" loading="lazy"></a></div>
-        <!-- Add more images as needed -->
-      </div>
-    </div>
-    <!-- Thumbnails Carousel -->
-    <div class="thumbnails-container">
-      <div class="thumbnails">
-        <div><img src="jampa.jpg" alt="Thumbnail 1" loading="lazy"></div>
-        <div><img src="logo.png" alt="Thumbnail 2" loading="lazy"></div>
-        <!-- Add more thumbnail images as needed -->
-      </div>
+  <div class="carousel-container">
+    <div class="carousel">
+      <?php foreach ($images as $image): ?>
+        <div><a href="<?php echo $image; ?>"><img src="<?php echo $image; ?>" alt="Hotel Image" loading="lazy"></a></div>
+      <?php endforeach; ?>
     </div>
   </div>
+  <!-- Thumbnails Carousel -->
+  <div class="thumbnails-container">
+    <div class="thumbnails">
+      <?php foreach ($images as $image): ?>
+        <div><img src="<?php echo $image; ?>" alt="Thumbnail Image" loading="lazy"></div>
+      <?php endforeach; ?>
+    </div>
+  </div>
+</div>
+
 
 
   <div class="sections">
     <div class="hotel--info">
-      <h2>Hotel Name</h2>
+      <h2>
+        <?php echo $hotelName; ?>
+      </h2>
+      <p class="p">
+        <?php echo $hotelLocation; ?>
+      </p>
+      <p class="p">
+        <?php echo $hotelEmail; ?>
+      </p>
+      <p class="p">
+        <?php echo $hotelContact; ?>
+      </p>
       <p class="paragraph1">
-        Welcome to our hotel, your next reliable home. We offer a comfortable
-        and convenient stay for travelers of all kinds. Whether you're
-        visiting for business or pleasure, location and friendly staff are
-        here to make your stay unforgettable.
-        <br /><br />Relax and unwind in our spacious rooms, each equipped with
-        comfortable beds, private bathrooms, complimentary Wi-Fi. Enjoy a
-        delicious meal at our on-site restaurant, featuring local specialties,
-        international dishes. For those seeking relaxation, take a dip in our
-        sparkling pool, soothing spa or explore the surrounding area with the
-        help of our concierge team. <br /><br />Book your stay today and
-        experience the comfort and hospitality that awaits you
+        Description:
+        <?php echo "<br>" . $description; ?>
       </p>
       <div class="area">
         <div class="list">
           <p class="paragraph">Our Services</p>
           <ul>
-            <li>Free Wifi</li>
-            <li>Free Parking</li>
-            <li>Free Breakfast</li>
-            <li>Clean Swimming Pool</li>
+            <?php foreach ($services as $service): ?>
+              <li>
+                <?php echo $service; ?>
+              </li>
+            <?php endforeach; ?>
           </ul>
         </div>
         <div class="list">
           <p class="paragraph">Rooms Available:</p>
           <ul>
-            <li>King size: 10</li>
-            <li>Luxury room: 8</li>
-            <li>Deluxe room: 4</li>
-            <li>Normal room: 20</li>
+            <?php foreach ($rooms as $roomType => $quantity): ?>
+              <li>
+                <?php echo $roomType . ": " . $quantity; ?>
+              </li>
+            <?php endforeach; ?>
           </ul>
         </div>
+        <div class="reviews">
+          <p class="paragraph">Feedbacks</p>
+          <p class="paragraph1">
+            How was your stay with us? We'd love to hear your thoughts!
+          </p>
+          <form action="">
+            <textarea rows="9" cols="100" placeholder="Write your message here....."></textarea>
+            <div class="area">
+              <input class="input" type="email" placeholder="Your email address" />
+              <input class="button-1" type="submit" placeholder="Send" />
+            </div>
+          </form>
+        </div>
       </div>
-      <div class="reviews">
-        <p class="paragraph">Feedbacks</p>
-        <p class="paragraph1">
-          How was your stay with us? We'd love to hear your thoughts!
-        </p>
-        <form action="">
-          <textarea rows="9" cols="100" placeholder="Write your message here....."></textarea>
-          <div class="area">
-            <input class="input" type="email" placeholder="Your email address" />
-            <input class="button-1" type="submit" placeholder="Send" />
+      <div class="booking">
+        <form action="reservation.php" class="form--container" method="post">
+          <div class="first--section">
+            <h2>Reservation</h2>
           </div>
+          <hr />
+          <div class="reservation">
+            <select class="reservation--info" name="room-type" placeholder="Type of room" id="room-type">
+              <option value="" disabled selected>Select type of room</option>
+              <option value="normal">Normal Room</option>
+              <option value="Luxury">Luxury Room</option>
+              <option value="deluxe">Deluxe Room</option>
+              <option value="king">King Size</option>
+            </select><br />
+            <select class="reservation--info" name="bed-type" id="room-type">
+              <option value="normal">Select bedding type</option>
+              <option value="single">Single Bed</option>
+              <option value="double">Double Bed</option>
+              <option value="triple">Triple Bed</option>
+            </select><br />
+            <select class="reservation--info" name="number-of-room" id="room-type">
+              <option value="">No of Room</option>
+              <option value="room1">1</option>
+              <option value="room2">2</option>
+              <option value="room3">3</option>
+              <option value="room4">4</option>
+            </select><br /><br />
+
+            <label for="guest" style="font-weight: bold">Guest: </label><br /><br />
+            <div class="count">
+              <div class="child">
+                <label for="children">Children: </label>
+              </div>
+              <div class="number">
+                <input type="number" value="children" /><br />
+              </div>
+            </div>
+            <div class="count">
+              <div class="child">
+                <label for="adult">Adult: </label>
+              </div>
+              <div class="number">
+                <input type="number" value="adult" />
+              </div>
+            </div>
+            <div class="count">
+              <div class="child">
+                <label for="check in">check in</label>
+              </div>
+              <div class="number"><input type="date" value="date" /><br /></div>
+            </div>
+            <div class="count">
+              <div class="child">
+                <label for="check out">check out</label>
+              </div>
+              <div class="number"><input type="date" value="date" /><br /></div>
+            </div>
+            <button type="submit" class="submit">Check Availability</button>
+          </div>
+          <div></div>
         </form>
       </div>
     </div>
-    <div class="booking">
-      <form action="reservation.php" class="form--container" method="post">
-        <div class="first--section">
-          <h2>Reservation</h2>
-        </div>
-        <hr />
-        <div class="reservation">
-          <select class="reservation--info" name="room-type" placeholder="Type of room" id="room-type">
-            <option value="normal">Select type of room</option>
-            <option value="normal">Normal Room</option>
-            <option value="normal">Luxury Room</option>
-            <option value="normal">Deluxe Room</option>
-            <option value="normal">King Size</option>
-          </select><br />
-          <select class="reservation--info" name="bed-type" id="room-type">
-            <option value="normal">Select bedding type</option>
-            <option value="normal">Single Bed</option>
-            <option value="normal">Double Bed</option>
-            <option value="normal">Triple Bed</option>
-            <option value="normal">None</option>
-          </select><br />
-          <select class="reservation--info" name="number-of-room" id="room-type">
-            <option value="">No of Room</option>
-            <option value="room">1</option>
-            <option value="room">2</option>
-            <option value="room">3</option>
-            <option value="room">4</option>
-          </select><br /><br />
-
-          <label for="guest" style="font-weight: bold">Guest: </label><br /><br />
-          <div class="count">
-            <div class="child">
-              <label for="children">Children: </label>
-            </div>
-            <div class="number">
-              <input type="number" value="children" /><br />
-            </div>
-          </div>
-          <div class="count">
-            <div class="child">
-              <label for="adult">Adult: </label>
-            </div>
-            <div class="number">
-              <input type="number" value="adult" />
-            </div>
-          </div>
-          <div class="count">
-            <div class="child">
-              <label for="check in">check in</label>
-            </div>
-            <div class="number"><input type="date" value="date" /><br /></div>
-          </div>
-          <div class="count">
-            <div class="child">
-              <label for="check out">check out</label>
-            </div>
-            <div class="number"><input type="date" value="date" /><br /></div>
-          </div>
-          <button type="submit" class="submit">Check Availability</button>
-        </div>
-        <div></div>
-      </form>
-    </div>
-  </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>

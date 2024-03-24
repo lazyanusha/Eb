@@ -1,3 +1,15 @@
+<?php
+session_start();
+// Check if a success message is set
+if (isset ($_SESSION['success_message'])) {
+    // Display the success message
+    echo "<div class='success-message'>" . $_SESSION['success_message'] . "</div>";
+
+    // Unset the success message to prevent it from being displayed again
+    unset($_SESSION['success_message']);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,6 +22,10 @@
     <style>
         .dashboard {
             background-color: #ffffff;
+        }
+
+        div {
+            margin-bottom: 10px;
         }
 
         a {
@@ -102,12 +118,6 @@
 
         }
 
-        .image-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 5px;
-        }
-
         .remove-btn {
             margin-left: auto;
             color: red;
@@ -117,16 +127,6 @@
             cursor: pointer;
         }
 
-        .dividend {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            padding: 10px 30px;
-        }
-
-        .service {
-            width: 49%;
-        }
 
         .room {
             width: 49%;
@@ -142,13 +142,13 @@
         }
 
         .divimages {
-            width: 49%;
-            display: flex;
-            flex-wrap: wrap;
-            height: 28vh;
-            border: 1px solid #ccc;
-            overflow-y: auto;
-            background-color: white;
+            margin-bottom: 10px;
+        }
+
+        .image-preview {
+            max-width: 300px;
+            max-height: 300px;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -209,8 +209,8 @@
                         <i class="fas fa-chevron-right"></i>
                     </div>
                     <ul class="dropdown-content">
-                        <li><a href="roomtype.php">Room Type</a></li>
-                        <li><a href="facilities.php">Facilities</a></li>
+                        <li><a href="hoteladd.php">Add Hotel</a></li>
+                        <li><a href="imagegallery.php">Image Gallery</a></li>
                     </ul>
                 </li>
                 <li><a href="setting.php">
@@ -248,66 +248,63 @@
                 <!-- Part Two Section -->
                 <div class="part--two">
                     <!-- Main Form Section -->
-                    <form class="mainform" action="">
+                    <form class="mainform" action="save_data.php" method="POST" enctype="multipart/form-data">
                         <div class="container">
                             <!-- Form Elements Section -->
                             <div class="elements">
-                                <label for="roomtype">Hotel Name</label><br>
-                                <input type="text" required>
+                                <label for="hotelName">Hotel Name</label><br>
+                                <input type="text" name="hotelName" required>
                             </div>
                             <div class="elements">
-                                <label for="roomcount">Room Count</label><br>
-                                <input type="number" required>
+                                <label for="hotelLocation">Hotel Location</label><br>
+                                <input type="text" name="hotelLocation" required>
+                            </div>
+                            <div class="elements">
+                                <label for="hotelEmail">Hotel Email</label><br>
+                                <input type="email" name="hotelEmail" required>
+                            </div>
+                            <div class="elements">
+                                <label for="hotelContact">Hotel Contact</label><br>
+                                <input type="text" name="hotelContact" required>
                             </div>
                         </div>
                         <div class="description">
                             <label for="description">Description</label>
-                            <textarea name="description" id="" cols="121" rows="20"></textarea>
+                            <textarea name="description" id="description" cols="121" rows="20"></textarea>
                         </div>
-                        <div class="dividend">
-                            <!-- Services Section -->
-                            <div class="service">
-                                <label for="services">Services:</label>
-                                <div id="services-container">
-                                    <!-- Existing service fields will be displayed here -->
-                                </div>
-                                <button type="button" onclick="addServiceField()">Add Service</button>
+                        <!-- Services Section -->
+                        <div class="service">
+                            <label for="services">Services:</label>
+                            <div id="services-container">
+                                <!-- Existing service fields will be displayed here -->
                             </div>
+                            <button type="button" onclick="addServiceField()">Add Service</button>
+                        </div>
 
-                            <!-- Images Section -->
-                            <div class="divimages">
-                                <label for="images">Images:</label>
-                                <div id="images-container">
-                                    <!-- Existing image fields will be displayed here -->
-                                </div>
-                                <button type="button" onclick="addImageField()">Add Image</button>
-                            </div>
+                        <!-- Images Section -->
+                        <div class="divimages">
+                            <label for="imageUpload">Featured Image:</label>
+                            <input type="file" id="imageUpload" name="image" accept="image/*">
                         </div>
+                        <div class="image-preview" id="imagePreview"></div>
+
+                        <!-- Rooms Section -->
                         <div class="dividend">
                             <div class="service">
-                                <label for="beds">Beds:</label>
-                                <div id="beds-container">
-                                    <!-- JavaScript will dynamically add input fields for bed entries here -->
+                                <label for="rooms">Rooms:</label>
+                                <div id="room-container">
+                                    <!-- JavaScript will dynamically add input fields for room entries here -->
                                 </div>
-                                <button type="button" onclick="addBedField()">Add Bed</button>
+                                <button type="button" onclick="addRoomField()">Add Room</button>
                             </div>
-                            <div class="room">
-                                <label for="roomcount">Room Count</label><br>
-                                <input type="number" required>
-                            </div>
-                        </div>
-                        <div class="elements">
-                            <label for="status">Status</label><br>
-                            <select name="" id="">
-                                <option value="published">Published</option>
-                                <option value="draft">Draft</option>
-                            </select>
                         </div>
                         <hr>
                         <div class="elements">
-                            <a href="roomtype.php"><button type="submit">Save</button></a>
+                            <button type="submit">Save</button>
                         </div>
                     </form>
+
+
                 </div>
             </div>
         </div>
@@ -379,8 +376,6 @@
             <div class="service-field">
                 <label for="service-name">Service Name:</label>
                 <input type="text" name="service-name[]" placeholder="Enter service name">
-                <label for="service-description">Description:</label>
-                <textarea name="service-description[]" placeholder="Enter service description"></textarea>
                 <button type="button" onclick="removeServiceField(this)">Remove</button>
             </div>
         `;
@@ -396,72 +391,84 @@
         }
 
         // Function to add bed field dynamically
-        function addBedField() {
-            var bedField = `
-            <div class="bed-field">
-                <label for="bed-type">Bed Type:</label>
-                <input type="text" name="bed-type[]" placeholder="Enter bed type">
-                <label for="bed-quantity">Quantity:</label>
-                <input type="number" name="bed-quantity[]" value="0" min="0">
-                <button type="button" onclick="removeBedField(this)">Remove</button>
-            </div>
-        `;
-            var container = document.getElementById('beds-container');
-            var div = document.createElement('div');
-            div.innerHTML = bedField.trim();
-            container.appendChild(div.firstChild);
-        }
+        // function addBedField() {
+        //     var bedField = `
+        //     <div class="bed-field">
+        //         <label for="bed-type">Bed Type:</label>
+        //         <input type="text" name="bed-type[]" placeholder="Enter bed type">
+        //         <label for="bed-quantity">Quantity:</label>
+        //         <input type="number" name="bed-quantity[]" value="0" min="0">
+        //         <button type="button" onclick="removeBedField(this)">Remove</button>
+        //     </div>
+        // `;
+        //     var container = document.getElementById('beds-container');
+        //     var div = document.createElement('div');
+        //     div.innerHTML = bedField.trim();
+        //     container.appendChild(div.firstChild);
+        // }
 
         // Function to remove bed field
-        function removeBedField(element) {
-            element.parentNode.remove();
-        }
+        // function removeBedField(element) {
+        //     element.parentNode.remove();
+        // }
 
-
-        // Function to add image field dynamically
-        function addImageField() {
-            var imageField = `
-                <div class="image-field">
-                    <label for="image">Image:</label>
-                    <input type="file" name="image[]" accept="image/*" onchange="previewImage(this)">
-                    <div class="image-preview"></div>
-                    <button type="button" onclick="removeImageField(this)">Remove</button>
-                </div>
-            `;
-            var container = document.getElementById('images-container');
+        function addRoomField() {
+            var roomField = `
+        <div class="room-field">
+            <label for="room-type">Room Type:</label>
+            <select class="reservation--info" name="room-type[]" id="room-type">
+            <option value="" disabled selected>Select type of room</option>
+            <option value="normal">Normal Room</option>
+            <option value="luxury">Luxury Room</option>
+            <option value="deluxe">Deluxe Room</option>
+            <option value="king">King Size</option>
+          </select>
+            <label for="room-quantity">Quantity:</label>
+            <input type="number" name="room-quantity[]" value="0" min="0">
+            <label for="price">Price per Room:</label>
+            <input type="number" name="price[]" value="0" min="0">
+            <button type="button" onclick="removeRoomField(this)">Remove</button>
+        </div>
+    `;
+            var container = document.getElementById('room-container');
             var div = document.createElement('div');
-            div.innerHTML = imageField.trim();
+            div.innerHTML = roomField.trim();
             container.appendChild(div.firstChild);
         }
 
-        // Function to remove image field
-        function removeImageField(element) {
+        // Function to remove room field
+        function removeRoomField(element) {
             element.parentNode.remove();
         }
 
         // Function to preview selected image
-        function previewImage(input) {
-            var preview = input.parentNode.querySelector('.image-preview');
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-                reader.onload = function (e) {
-                    var img = new Image();
-                    img.src = e.target.result;
-                    img.onload = function () {
-                        var canvas = document.createElement('canvas');
-                        var ctx = canvas.getContext('2d');
-                        canvas.width = 150;
-                        canvas.height = 150;
-                        ctx.drawImage(img, 0, 0, 150, 150);
-                        preview.innerHTML = '';
-                        preview.appendChild(canvas);
-                    };
+        const imageUpload = document.getElementById('imageUpload');
+        const imagePreview = document.getElementById('imagePreview');
+
+        imageUpload.addEventListener('change', function () {
+            const file = this.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                const img = new Image();
+                img.src = e.target.result;
+                img.onload = function () {
+                    imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview Image">`;
+                };
+            };
+
+            if (file) {
+                if (file.type.match('image.*')) {
+                    reader.readAsDataURL(file);
+                } else {
+                    // Clear the input field and the preview if the selected file is not an image
+                    imageUpload.value = '';
+                    imagePreview.innerHTML = '';
+                    alert('Please select only image files.');
                 }
-                reader.readAsDataURL(input.files[0]);
-            } else {
-                preview.innerHTML = '';
             }
-        }
+        });
+
     </script>
 </body>
 
