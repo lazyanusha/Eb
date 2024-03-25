@@ -1,6 +1,6 @@
 <?php
-include('..static/particials/nav.php');
-$backgroundImagePath = "../static/images/hotel.png";
+include('nav.php');
+$backgroundImagePath = "./images/hotel.png";
 ?>
 
 <!DOCTYPE html>
@@ -9,8 +9,8 @@ $backgroundImagePath = "../static/images/hotel.png";
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
-    <link rel="stylesheet" href="../stactic/css/style.css" />
-    <script src="../static/js/hotel.js"></script>
+   <link rel="stylesheet" href="./css/home.css">
+    <script src=".js/hotel.js"></script>
     <style>
      .first_section {
       background-image: url('<?php echo $backgroundImagePath; ?>');
@@ -87,3 +87,6 @@ $backgroundImagePath = "../static/images/hotel.png";
   </body>
 </html>
 
+<?php
+  include 'footer.php';
+?>

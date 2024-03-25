@@ -1,14 +1,12 @@
 <?php
-session_start();
 include 'connection.php';
-
-// Initialize variables
 $hotelName = $hotelLocation = $hotelEmail = $hotelContact = $description = '';
 $services = $rooms = array();
+$images = array(); // Initialize the $images array to avoid undefined variable error
 
-// Check if hotel_id is set in the session
-if (isset ($_SESSION['hotel_id'])) {
-  $hotel_id = $_SESSION['hotel_id'];
+// Check if hotel_id is set in the query string
+if (isset ($_GET['hotel_id'])) {
+  $hotel_id = $_GET['hotel_id'];
 
   // Retrieve hotel information from the database
   $sql = "SELECT * FROM hotels WHERE hotel_id = ?";
@@ -18,7 +16,6 @@ if (isset ($_SESSION['hotel_id'])) {
     if (mysqli_stmt_execute($stmt)) {
       $result = mysqli_stmt_get_result($stmt);
       if ($row = mysqli_fetch_assoc($result)) {
-        // Assign retrieved values to variables
         $hotelName = $row['hotel_name'];
         $hotelLocation = $row['hotel_address'];
         $hotelEmail = $row['hotel_email'];
@@ -26,11 +23,11 @@ if (isset ($_SESSION['hotel_id'])) {
         $description = $row['description'];
       }
     } else {
-      echo "Error: " . mysqli_error($conn);
+      echo "Error executing hotel query: " . mysqli_error($conn);
     }
     mysqli_stmt_close($stmt);
   } else {
-    echo "Error: " . mysqli_error($conn);
+    echo "Error preparing hotel query: " . mysqli_error($conn);
   }
 
   // Retrieve services from the database
@@ -44,11 +41,11 @@ if (isset ($_SESSION['hotel_id'])) {
         $services[] = $row_services['service'];
       }
     } else {
-      echo "Error: " . mysqli_error($conn);
+      echo "Error executing services query: " . mysqli_error($conn);
     }
     mysqli_stmt_close($stmt_services);
   } else {
-    echo "Error: " . mysqli_error($conn);
+    echo "Error preparing services query: " . mysqli_error($conn);
   }
 
   // Retrieve room details from the database
@@ -62,29 +59,37 @@ if (isset ($_SESSION['hotel_id'])) {
         $rooms[$row_rooms['room_type']] = $row_rooms['quantity'];
       }
     } else {
-      echo "Error: " . mysqli_error($conn);
+      echo "Error executing rooms query: " . mysqli_error($conn);
     }
     mysqli_stmt_close($stmt_rooms);
   } else {
-    echo "Error: " . mysqli_error($conn);
+    echo "Error preparing rooms query: " . mysqli_error($conn);
   }
 
+  // Retrieve hotel images from the database
   $sql_images = "SELECT image_name FROM hotel_images WHERE hotel_id = ?";
   $stmt_images = mysqli_prepare($conn, $sql_images);
-  mysqli_stmt_bind_param($stmt_images, "i", $_SESSION['hotel_id']); // Assuming you have stored hotel_id in session
-  mysqli_stmt_execute($stmt_images);
-  $result_images = mysqli_stmt_get_result($stmt_images);
+  if ($stmt_images) {
+    mysqli_stmt_bind_param($stmt_images, "i", $hotel_id);
+    if (mysqli_stmt_execute($stmt_images)) {
+      $result_images = mysqli_stmt_get_result($stmt_images);
 
-  // Fetch and store image names in an array
-  $images = array();
-  while ($row_images = mysqli_fetch_assoc($result_images)) {
-    $images[] = $row_images['image_name'];
+      // Fetch and store image names in an array
+      while ($row_images = mysqli_fetch_assoc($result_images)) {
+        $images[] = $row_images['image_name'];
+      }
+    } else {
+      echo "Error executing image query: " . mysqli_error($conn);
+    }
+    mysqli_stmt_close($stmt_images);
+  } else {
+    echo "Error preparing image query: " . mysqli_error($conn);
   }
-  // Close database connection
-  mysqli_close($conn);
+
 } else {
-  echo "Hotel ID not found in session.";
+  echo "Hotel ID not found in query string.";
 }
+
 ?>
 
 
@@ -95,7 +100,7 @@ if (isset ($_SESSION['hotel_id'])) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reservation</title>
-  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./css/home.css">
   <!-- Slick Carousel CSS -->
   <link rel="stylesheet" type="text/css"
     href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
@@ -160,6 +165,7 @@ if (isset ($_SESSION['hotel_id'])) {
       cursor: pointer;
     }
   </style>
+</head>
 
 <body>
   <div>
@@ -186,24 +192,23 @@ if (isset ($_SESSION['hotel_id'])) {
     </nav>
   </div>
   <div class="image">
-  <div class="carousel-container">
-    <div class="carousel">
-      <?php foreach ($images as $image): ?>
-        <div><a href="<?php echo $image; ?>"><img src="<?php echo $image; ?>" alt="Hotel Image" loading="lazy"></a></div>
-      <?php endforeach; ?>
+    <div class="carousel-container">
+      <div class="carousel">
+        <?php foreach ($images as $image): ?>
+          <div><a href="<?php echo $image; ?>"><img src="<?php echo $image; ?>" alt="Hotel Image" loading="lazy"></a>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    </div>
+    <!-- Thumbnails Carousel -->
+    <div class="thumbnails-container">
+      <div class="thumbnails">
+        <?php foreach ($images as $image): ?>
+          <div><img src="<?php echo $image; ?>" alt="Thumbnail Image" loading="lazy"></div>
+        <?php endforeach; ?>
+      </div>
     </div>
   </div>
-  <!-- Thumbnails Carousel -->
-  <div class="thumbnails-container">
-    <div class="thumbnails">
-      <?php foreach ($images as $image): ?>
-        <div><img src="<?php echo $image; ?>" alt="Thumbnail Image" loading="lazy"></div>
-      <?php endforeach; ?>
-    </div>
-  </div>
-</div>
-
-
 
   <div class="sections">
     <div class="hotel--info">
@@ -265,65 +270,56 @@ if (isset ($_SESSION['hotel_id'])) {
           </div>
           <hr />
           <div class="reservation">
-            <select class="reservation--info" name="room-type" placeholder="Type of room" id="room-type">
+            <label for="room-type" class="reservation--label">Type of room:</label>
+            <select class="reservation--info" name="room-type" id="room-type">
               <option value="" disabled selected>Select type of room</option>
-              <option value="normal">Normal Room</option>
-              <option value="Luxury">Luxury Room</option>
-              <option value="deluxe">Deluxe Room</option>
-              <option value="king">King Size</option>
+              <?php foreach ($rooms as $roomType => $quantity): ?>
+                <option value="<?php echo $roomType; ?>">
+                  <?php echo ucfirst($roomType); ?> Room
+                </option>
+              <?php endforeach; ?>
             </select><br />
-            <select class="reservation--info" name="bed-type" id="room-type">
+
+
+            <label for="bed-type" class="reservation--label">Bedding type:</label>
+            <select class="reservation--info" name="bed-type" id="bed-type">
               <option value="normal">Select bedding type</option>
               <option value="single">Single Bed</option>
               <option value="double">Double Bed</option>
               <option value="triple">Triple Bed</option>
             </select><br />
-            <select class="reservation--info" name="number-of-room" id="room-type">
-              <option value="">No of Room</option>
-              <option value="room1">1</option>
-              <option value="room2">2</option>
-              <option value="room3">3</option>
-              <option value="room4">4</option>
-            </select><br /><br />
 
-            <label for="guest" style="font-weight: bold">Guest: </label><br /><br />
-            <div class="count">
-              <div class="child">
-                <label for="children">Children: </label>
-              </div>
-              <div class="number">
-                <input type="number" value="children" /><br />
-              </div>
-            </div>
-            <div class="count">
-              <div class="child">
-                <label for="adult">Adult: </label>
-              </div>
-              <div class="number">
-                <input type="number" value="adult" />
-              </div>
-            </div>
-            <div class="count">
-              <div class="child">
-                <label for="check in">check in</label>
-              </div>
-              <div class="number"><input type="date" value="date" /><br /></div>
-            </div>
-            <div class="count">
-              <div class="child">
-                <label for="check out">check out</label>
-              </div>
-              <div class="number"><input type="date" value="date" /><br /></div>
-            </div>
+            <label for="number-of-room" class="reservation--label">Number of rooms:</label>
+            <select class="reservation--info" name="number-of-room" id="number-of-room">
+              <option value="">No of Room</option>
+              <?php for ($i = 1; $i <= $quantity; $i++): ?>
+                <option value="<?php echo $i; ?>">
+                  <?php echo $i; ?>
+                </option>
+              <?php endfor; ?>
+            </select><br />
+            <br /><br />
+
+            <label for="children" class="reservation--label">Children:</label>
+            <input type="number" name="children" id="children"><br />
+
+            <label for="adult" class="reservation--label">Adult:</label>
+            <input type="number" name="adult" id="adult"><br />
+
+            <label for="check-in" class="reservation--label">Check-in:</label>
+            <input type="date" name="check-in" id="check-in"><br />
+
+            <label for="check-out" class="reservation--label">Check-out:</label>
+            <input type="date" name="check-out" id="check-out"><br />
+
             <button type="submit" class="submit">Check Availability</button>
           </div>
-          <div></div>
         </form>
+
       </div>
     </div>
+  </div>
 </body>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 <script>
   $(document).ready(function () {
     // Initialize main carousel
@@ -353,11 +349,11 @@ if (isset ($_SESSION['hotel_id'])) {
       asNavFor: '.carousel'
     });
   });
+
+
 </script>
-
-
 
 </html>
 <?php
-include ('footer.php')
-  ?>
+include 'footer.php';
+?>

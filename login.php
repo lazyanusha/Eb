@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Hotel Reservation System - Log in</title>
-  <link rel="stylesheet" href="./css/login.css" />
+  <link rel="stylesheet" href="./css/log.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
   <style>
     .password-container {
@@ -27,7 +27,7 @@
 
     .error-message {
       color: red;
-      font-size: 14px;
+      font-size: clamp(0.75rem, 0.7067rem + 0.1923vw, 0.875rem);
       margin-top: 5px;
     }
   </style>

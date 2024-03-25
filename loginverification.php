@@ -4,7 +4,7 @@ include 'connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
-    $userLoginPassword = $_POST['password']; // The password the user submits on login
+    $userLoginPassword = $_POST['password'];
 
     // Prepare and execute the SELECT query using a prepared statement
     $stmt = $conn->prepare("SELECT password FROM users WHERE email = ?");

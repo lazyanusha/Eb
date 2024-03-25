@@ -8,7 +8,7 @@
     />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
     <title>Forgot Password</title>
-    <link rel="stylesheet" href="./css/login.css" />
+    <link rel="stylesheet" href="./css/login.css">
   </head>
   <body>
     <div class="form--3">

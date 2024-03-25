@@ -1,8 +1,28 @@
 <?php
 include ('nav.php');
 $backgroundImagePath = "./images/hotel.png";
-?>
-<?php
+include 'connection.php';
+
+// Retrieve hotel information from the database
+$sql = "SELECT hotel_id, hotel_name, hotel_contact, hotel_address, photos, ratings FROM hotels"; // Adjust the query to fetch the required fields
+$result = mysqli_query($conn, $sql);
+
+// Fetch all hotel data into an array
+$hotels = [];
+while ($row_hotel = mysqli_fetch_assoc($result)) {
+  $hotels[] = $row_hotel;
+}
+$userCity = isset ($_GET['location']) ? $_GET['location'] : "Thamel";
+
+// Adjust SQL query to select hotels based on their city or region
+$sql = "SELECT hotel_id, hotel_name, hotel_contact, hotel_address, photos, ratings FROM hotels WHERE hotel_address LIKE '%$userCity%'";
+$result = mysqli_query($conn, $sql);
+
+// Fetch hotels
+$nearbyHotels = [];
+while ($row_hotel = mysqli_fetch_assoc($result)) {
+  $nearbyHotels[] = $row_hotel; // Add hotel to nearby hotels array
+}
 
 ?>
 <!DOCTYPE html>
@@ -12,23 +32,11 @@ $backgroundImagePath = "./images/hotel.png";
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Easybookings</title>
-  <link rel="stylesheet" href="./css/style.css" />
+  <link rel="stylesheet" href="./css/home.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
   <style>
     .first_section {
       background-image: url('<?php echo $backgroundImagePath; ?>');
-
-      width: 100%;
-      height: 100vh;
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    i {
-      color: gold;
     }
   </style>
 
@@ -45,68 +53,112 @@ $backgroundImagePath = "./images/hotel.png";
   </div>
   <div class="container">
     <div class="second_section">
-      <h2>Hotels near you.!!</h2>
+      <h2 class="heading">Hotels list</h2>
       <div class="card--container">
-        <div class="card">
-          <a href="login.php"><img src="taleju.jpg" alt="hotel abc" /></a>
-          <div class="card--content">
-            <a href="login.php">
-              <h2 class="card--title">Taleju Boutique Hotel</h2>
+        <?php foreach ($hotels as $hotel): ?>
+          <div class="card">
+            <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>">
+              <img src="uploads/<?php echo $hotel['photos']; ?>" alt="<?php echo $hotel['hotel_name']; ?>" />
+              <div class="card--content">
+                <h2 class="card--title">
+                  <?php echo $hotel['hotel_name']; ?>
+                </h2>
+                <p class="card--details">
+                  <?php echo $hotel['hotel_contact']; ?>
+                </p>
+                <p class="card--details">
+                  <?php echo $hotel['hotel_address']; ?>
+                </p>
+                <div class="stars">
+                  <?php
+                  $ratings = $hotel['ratings'];
+                  for ($i = 0; $i < $ratings; $i++) {
+                    echo '<i class="fas fa-star"></i>';
+                  }
+                  ?>
+                </div>
+                <p>Know more....</p>
+                <br />
+              </div>
             </a>
-            <p class="card--details">Thamel, Kathmandu</p>
-            <p>Ratings</p>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <a href="login.php" target="_self">
-              <p>Know more....</p>
-            </a><br />
           </div>
-        </div>
+        <?php endforeach; ?>
       </div>
+    </div>
 
-    </div>
-    <div class="second_section">
-      <h2>Most popular Hotels!!</h2>
-      <div class="card--container">
-        <div class="card">
-          <a href="login.php"><img src="kathmandu.jpg" alt="hotel abc" /></a>
-          <div class="card--content">
-            <a href="login.php">
-              <h2 class="card--title">Kathmandu Suite Hotel</h2>
-            </a>
-            <p class="card--details">Thamel, Kathmandu</p>
-            <p>Ratings</p>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <a href="login.php" target="_self">
-              <button>More Detais</button>
-            </a><br />
-          </div>
-        </div>
-      </div>
-    </div>
-    <h2>Most popular Hotels!!</h2>
+    <h2 class="heading">Hotels near
+      <?php echo $userCity; ?>
+    </h2>
+    <!-- Allow users to input their location -->
+    <form action="" method="GET">
+      <input type="text" id="location" name="location" placeholder="Enter city or region">
+      <button type="submit"><i class="fas fa-search"></i></button>
+    </form>
+
     <div class="card--container">
-      <div class="card">
-        <a href="login.php"><img src="taleju.jpg" alt="hotel abc" /></a>
-        <div class="card--content">
-          <a href="login.php">
-            <h2 class="card--title">Taleju Boutique Hotel</h2>
+      <?php foreach ($nearbyHotels as $hotel): ?>
+        <div class="card">
+          <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>">
+            <img src="uploads/<?php echo $hotel['photos']; ?>" alt="<?php echo $hotel['hotel_name']; ?>" />
+            <div class="card--content">
+              <h2 class="card--title">
+                <?php echo $hotel['hotel_name']; ?>
+              </h2>
+              <p class="card--details">
+                <?php echo $hotel['hotel_contact']; ?>
+              </p>
+              <p class="card--details">
+                <?php echo $hotel['hotel_address']; ?>
+              </p>
+              <div class="stars">
+                <?php
+                $ratings = $hotel['ratings'];
+                for ($i = 0; $i < $ratings; $i++) {
+                  echo '<i class="fas fa-star"></i>';
+                }
+                ?>
+              </div>
+              <p>Know more....</p>
+              <br />
+            </div>
           </a>
-          <p class="card--details">Thamel, Kathmandu</p>
-          <p>Ratings</p>
-          <span><i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i>
-            <i class="fa-solid fa-star"></i></span>
-          <a href="login.php" target="_self">
-            <p>Know more....</p>
-          </a><br />
         </div>
+      <?php endforeach; ?>
+    </div>
+
+    <div class="second_section">
+      <h2 class="heading" >Most popular Hotels!!</h2>
+      <div class="card--container">
+        <?php foreach ($hotels as $hotel): ?>
+          <?php if ($hotel['ratings'] >= 4): ?>
+            <div class="card">
+              <a href="login.php?hotel_id=<?php echo $hotel['hotel_id']; ?>">
+                <img src="uploads/<?php echo $hotel['photos']; ?>" alt="<?php echo $hotel['hotel_name']; ?>" />
+                <div class="card--content">
+                  <h2 class="card--title">
+                    <?php echo $hotel['hotel_name']; ?>
+                  </h2>
+                  <p class="card--details">
+                    <?php echo $hotel['hotel_contact']; ?>
+                  </p>
+                  <p class="card--details">
+                    <?php echo $hotel['hotel_address']; ?>
+                  </p>
+                  <div class="stars">
+                    <?php
+                    $ratings = $hotel['ratings'];
+                    for ($i = 0; $i < $ratings; $i++) {
+                      echo '<i class="fas fa-star"></i>';
+                    }
+                    ?>
+                  </div>
+                  <p class="know">Know more....</p>
+                  <br />
+                </div>
+              </a>
+            </div>
+          <?php endif; ?>
+        <?php endforeach; ?>
       </div>
     </div>
   </div>
