@@ -114,18 +114,13 @@ if (isset ($_GET['hotel_id'])) {
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
   <style>
     .image img {
-      height: 70vh;
+      height: 80vh;
       width: 100%;
     }
 
     .image {
-      height: 80vh;
-      margin-bottom: 150px;
-    }
-
-    .p {
-      color: #343434;
-      font-size: 16px;
+      height: 85vh;
+      margin-bottom: 60px;
     }
 
     .slick-prev,
@@ -171,23 +166,18 @@ if (isset ($_GET['hotel_id'])) {
   <div>
     <nav class="navigation_bar">
       <div class="logo">
-        <a href="home.php">EasyBookings</a>
+        <a href="home.php"><img src="./images/logo3.png" alt="logo"></a>
       </div>
       <div class="menu">
         <ul>
           <li><a href="landing.php">Home</a></li>
-          <li><a href="About us.php">About Us</a></li>
+          <li><a href="Aboutus.php">About Us</a></li>
+          <li><a href="hotellist.php">Hotels</a></li>
           <li><a href="contact_us.php">Contact Us</a></li>
-          <li><a href="services.php">Services</a></li>
         </ul>
       </div>
       <div class="new">
-        <a href="g-dashboard.php">Dashboard</a>
-        <a href="g-booking.php"><i class="fas fa-bed"></i>
-        </a>
-
-        <a href="home.php"><i class="fas fa-sign-out-alt"></i></a>
-
+        <a href="logout.php">Log Out</a>
       </div>
     </nav>
   </div>
@@ -210,18 +200,18 @@ if (isset ($_GET['hotel_id'])) {
     </div>
   </div>
 
-  <div class="sections">
+  <div class="section">
     <div class="hotel--info">
       <h2>
         <?php echo $hotelName; ?>
       </h2>
-      <p class="p">
+      <p>
         <?php echo $hotelLocation; ?>
       </p>
-      <p class="p">
+      <p>
         <?php echo $hotelEmail; ?>
       </p>
-      <p class="p">
+      <p>
         <?php echo $hotelContact; ?>
       </p>
       <p class="paragraph1">
@@ -248,13 +238,14 @@ if (isset ($_GET['hotel_id'])) {
               </li>
             <?php endforeach; ?>
           </ul>
-        </div>
-        <div class="reviews">
+        </div>     
+      </div>
+      <div class="reviews">
           <p class="paragraph">Feedbacks</p>
-          <p class="paragraph1">
+          <p class="paragraph1" >
             How was your stay with us? We'd love to hear your thoughts!
           </p>
-          <form action="">
+          <form action="" class="sec" >
             <textarea rows="9" cols="100" placeholder="Write your message here....."></textarea>
             <div class="area">
               <input class="input" type="email" placeholder="Your email address" />
@@ -262,7 +253,6 @@ if (isset ($_GET['hotel_id'])) {
             </div>
           </form>
         </div>
-      </div>
       <div class="booking">
         <form action="reservation.php" class="form--container" method="post">
           <div class="first--section">
@@ -279,8 +269,6 @@ if (isset ($_GET['hotel_id'])) {
                 </option>
               <?php endforeach; ?>
             </select><br />
-
-
             <label for="bed-type" class="reservation--label">Bedding type:</label>
             <select class="reservation--info" name="bed-type" id="bed-type">
               <option value="normal">Select bedding type</option>
@@ -288,7 +276,6 @@ if (isset ($_GET['hotel_id'])) {
               <option value="double">Double Bed</option>
               <option value="triple">Triple Bed</option>
             </select><br />
-
             <label for="number-of-room" class="reservation--label">Number of rooms:</label>
             <select class="reservation--info" name="number-of-room" id="number-of-room">
               <option value="">No of Room</option>
@@ -297,9 +284,8 @@ if (isset ($_GET['hotel_id'])) {
                   <?php echo $i; ?>
                 </option>
               <?php endfor; ?>
-            </select><br />
-            <br /><br />
-
+            </select><br />   
+            <label for="guest">Guests:</label><br><br>
             <label for="children" class="reservation--label">Children:</label>
             <input type="number" name="children" id="children"><br />
 

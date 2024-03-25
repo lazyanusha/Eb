@@ -14,14 +14,6 @@ $backgroundImagePath = "./images/hotel.png";
     <style>
      .first_section {
       background-image: url('<?php echo $backgroundImagePath; ?>');
-
-      width: 100%;
-      height: 100vh;
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      justify-content: center;
-      align-items: center;
     }
       .hotel--section {
         display: flex;

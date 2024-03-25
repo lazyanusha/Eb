@@ -187,18 +187,11 @@ i {
 
 
 /* Book page styles */
-.image {
-  height: 60vh;
-  width: 100%;
-  background-position: center;
-  text-align: center;
-}
-
-.sections {
+.section {
   display: flex;
   justify-content: space-between;
-  margin: 60px 120px;
-  column-gap: 150px;
+  margin: 40px 120px;
+  /* column-gap: 150px; */
 }
 
 .hotel--info {
@@ -218,19 +211,25 @@ i {
 }
 
 .area {
-  margin-top: 5px;
+  margin-top: 5px;  
   display: flex;
   justify-content: space-between;
 }
 
+textarea{
+  border: none;
+  padding: 5px;
+}
 .input {
   width: 69%;
 }
-
+input[type='submit']{
+  cursor: pointer;
+}
 .paragraph {
-  color: #343434;
   font-size: 20px;
   font-weight: 600;
+  margin-bottom: 20px;
 }
 
 .paragraph1 {
@@ -238,6 +237,7 @@ i {
   font-size: 16px;
   text-align: justify;
   line-height: 160%;
+  margin-bottom: 10px;
 }
 
 .list ul {
@@ -260,20 +260,20 @@ i {
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 122vh;
+  height: 140vh;
 }
-
+.sec{
+  flex-direction: column;
+}
 .form--container {
   width: 80%;
   display: flex;
   flex-direction: column;
+  row-gap: 20px;
 }
 
 .reservation {
   margin-top: 20px;
-}
-
-.form--container {
   row-gap: 20px;
 }
 
@@ -335,7 +335,7 @@ input {
 
 /* Footer styles */
 footer {
-  background-color: rgba(88, 157, 236, 0.826);
+  background-color: #2b3454;
   height: 250px;
   width: 100%;
   padding: 20px 100px;

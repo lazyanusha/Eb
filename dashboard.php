@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard</title>
-  <link rel="stylesheet" href="./css/dash.css">
+  <link rel="stylesheet" href="./css/dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
   <style>
     .dropdown-btn {
@@ -34,14 +34,13 @@
     .dropdown.active .dropdown-btn i {
       transform: translateY(-50%) rotate(90deg);
     }
-
   </style>
 </head>
 
 <body>
   <div class="dash--heading">
     <div class="hotel--name">
-      <p>Easybookings</p>
+      <img src="./images/logo3.png" alt="img">
     </div>
     <div class="second--part1">
       <div class="search">
@@ -52,23 +51,21 @@
       </div>
       <div class="admin--profile">
         <p>Welcome sweetpea.!</p>
-        <a href="g-setting.php"> <img src="./images/logo3.png" alt="img"></a>
+        <a href="g-setting.php"> <img src="./images/log.png" alt="img"></a>
       </div>
     </div>
   </div>
   <div class="dashboard">
+    <!-- Sidebar Section -->
     <div class="sidebar">
+      <!-- Main Navigation Links -->
       <ul class="main">
-        <li>
-          <a href="dashboard.php">
+        <li><a href="dashboard.php">
             <div>Dashboard</div>
-          </a>
-        </li>
-        <li>
-          <a href="guest.php">
+          </a></li>
+        <li><a href="guest.php">
             <div>Guests</div>
-          </a>
-        </li>
+          </a></li>
         <li class="dropdown">
           <div class="dropdown-btn">
             Booking Manage
@@ -79,27 +76,22 @@
             <li><a href="all_bookings.php">All Bookings</a></li>
           </ul>
         </li>
-        <li>
-          <a href="#">
+        <li><a href="rooms.php">
             <div>Rooms</div>
-          </a>
-        </li>
+          </a></li>
         <li class="dropdown">
           <div class="dropdown-btn">
             Manage Hotel
             <i class="fas fa-chevron-right"></i>
           </div>
           <ul class="dropdown-content">
-            <li><a href="roomtype.php">Room Type</a></li>
-            <li><a href="bedtype.php">Bed Types</a></li>
-            <li><a href="facilities.php">Facilities</a></li>
+            <li><a href="hoteladd.php">Add Hotel</a></li>
+            <li><a href="imagegallery.php">Image Gallery</a></li>
           </ul>
         </li>
-        <li>
-          <a href="setting.php">
+        <li><a href="setting.php">
             <div>Settings</div>
-          </a>
-        </li>
+          </a></li>
       </ul>
     </div>
 

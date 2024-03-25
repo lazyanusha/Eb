@@ -8,6 +8,7 @@ $hotelLocation = $_POST['hotelLocation'];
 $hotelEmail = $_POST['hotelEmail'];
 $hotelContact = $_POST['hotelContact'];
 $description = $_POST['description'];
+$ratings = $_POST['ratings'];
 
 if (isset($_FILES['image'])) {
     $file_name = $_FILES['image']['name'];
@@ -18,13 +19,13 @@ if (isset($_FILES['image'])) {
 }
 
 // Prepare the SQL statement using a prepared statement
-$sql = "INSERT INTO hotels (hotel_name, hotel_email, hotel_address, hotel_contact, description, photos) 
-        VALUES (?, ?, ?, ?, ?, ?)";
+$sql = "INSERT INTO hotels (hotel_name, hotel_email, hotel_address, hotel_contact, description, photos, ratings) 
+        VALUES (?, ?, ?, ?, ?, ?,?)";
 
 $stmt = mysqli_prepare($conn, $sql);
 
 // Bind parameters to the prepared statement
-mysqli_stmt_bind_param($stmt, "ssssss", $hotelName, $hotelEmail, $hotelLocation, $hotelContact, $description, $file_name);
+mysqli_stmt_bind_param($stmt, "ssssssi", $hotelName, $hotelEmail, $hotelLocation, $hotelContact, $description, $file_name,$ratings);
 
 // Execute the prepared statement
 if (mysqli_stmt_execute($stmt)) {
