@@ -32,15 +32,6 @@ include 'connection.php';
 //     availability BOOLEAN NOT NULL
 // )";
 
-
-// $sql = "CREATE TABLE guests (
-//     guest_id INT AUTO_INCREMENT PRIMARY KEY,
-//     guest_name INT NOT NULL,
-//     guest_email VARCHAR(255) NOT NULL,
-//     guest_contact varchar(255) not null,
-//     guest_pass varchar(255) not null
-// )";
-
 // $sql = "CREATE TABLE reservations (
 //     reserve_id INT AUTO_INCREMENT PRIMARY KEY,
 //     guest_id int not null,
@@ -67,9 +58,28 @@ include 'connection.php';
 //     hotel_id INT,
 //     image_data BLOB,
 //     FOREIGN KEY (hotel_id) REFERENCES hotels(hotel_id)
-// );
+// )";
 
 
+// $sql = "CREATE TABLE reservations (
+//     reservation_id INT AUTO_INCREMENT PRIMARY KEY,
+//     guest_name VARCHAR(100) NOT NULL,
+//     guests_num INT NOT NULL,
+//     contact_information VARCHAR(255),
+//     check_in_date DATE NOT NULL,
+//     check_out_date DATE NOT NULL,
+//     room_number VARCHAR(20) NOT NULL,
+//     room_type VARCHAR(50),
+//     bed_type VARCHAR(50), 
+//     special_requests TEXT,
+//     total_price DECIMAL(10,2) NOT NULL,
+//     payment_status ENUM('paid', 'pending', 'cancelled') NOT NULL DEFAULT 'pending',
+//     payment_method VARCHAR(50) NOT NULL,
+//     hotel_id INT,
+//     FOREIGN KEY (hotel_id) REFERENCES hotels(hotel_id),
+//     booking_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+//     reservation_status ENUM('confirmed', 'pending', 'cancelled') NOT NULL DEFAULT 'pending'
+// )";
 
 
 
