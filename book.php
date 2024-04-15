@@ -85,7 +85,7 @@ if (isset($_GET['hotel_id'])) {
 }
 
 if (isset($_SESSION['email'])) {
-    $email = $_SESSION['email'];
+    $userEmail = $_SESSION['email'];
 
     $sql_user = "SELECT fullname, phone FROM users WHERE email = ?";
     $stmt_user = mysqli_prepare($conn, $sql_user);
@@ -113,6 +113,8 @@ if (isset($_SESSION['email'])) {
     echo "User email not found in session.";
     exit;
 }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -178,9 +180,9 @@ if (isset($_SESSION['email'])) {
         <div class="carousel-container">
             <div class="carousel">
                 <?php foreach ($images as $image): ?>
-                <div><a href="<?php echo $image; ?>"><img src="<?php echo $image; ?>" alt="Hotel Image"
-                            loading="lazy"></a>
-                </div>
+                    <div><a href="<?php echo $image; ?>"><img src="<?php echo $image; ?>" alt="Hotel Image"
+                                loading="lazy"></a>
+                    </div>
                 <?php endforeach; ?>
             </div>
         </div>
@@ -208,9 +210,9 @@ if (isset($_SESSION['email'])) {
                     <p><strong>Our Services</strong></p>
                     <ul>
                         <?php foreach ($services as $service): ?>
-                        <li>
-                            <?php echo $service; ?>
-                        </li>
+                            <li>
+                                <?php echo $service; ?>
+                            </li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
@@ -218,9 +220,9 @@ if (isset($_SESSION['email'])) {
                     <p><strong>Rooms Available</strong></p>
                     <ul>
                         <?php foreach ($rooms as $roomType => $quantity): ?>
-                        <li>
-                            <?php echo $roomType . ": " . $quantity; ?>
-                        </li>
+                            <li>
+                                <?php echo $roomType . ": " . $quantity; ?>
+                            </li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
@@ -250,13 +252,14 @@ if (isset($_SESSION['email'])) {
                     <input type="hidden" name="hotel_id" value="<?php echo $hotel_id; ?>">
                     <input type="hidden" name="fullname" value="<?php echo $guestName; ?>">
                     <input type="hidden" name="contact" value="<?php echo $contact; ?>">
+                    <input type="hidden" name="email" value="<?php echo isset($userEmail) ? $userEmail : ''; ?>">
                     <label for="room-type" class="reservation--label">Type of room:</label>
                     <select class="reservation--info" name="room-type" id="room-type">
                         <option value="" disabled selected>Select type of room</option>
                         <?php foreach ($rooms as $roomType => $quantity): ?>
-                        <option value="<?php echo $roomType; ?>">
-                            <?php echo ucfirst($roomType); ?> Room
-                        </option>
+                            <option value="<?php echo $roomType; ?>">
+                                <?php echo ucfirst($roomType); ?> Room
+                            </option>
                         <?php endforeach; ?>
                     </select>
                     <label for="bed-type" class="reservation--label">Bedding type:</label>
@@ -270,9 +273,9 @@ if (isset($_SESSION['email'])) {
                     <select class="reservation--info" name="number-of-room" id="number-of-room">
                         <option value="" disabled selected>Select room number</option>
                         <?php for ($i = 1; $i <= $quantity; $i++): ?>
-                        <option value="<?php echo $i; ?>">
-                            <?php echo $i; ?>
-                        </option>
+                            <option value="<?php echo $i; ?>">
+                                <?php echo $i; ?>
+                            </option>
                         <?php endfor; ?>
                     </select>
                     <label for="guest">Guests:</label><br>

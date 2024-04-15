@@ -50,7 +50,8 @@ include 'connection.php';
 //     email VARCHAR(255) NOT NULL UNIQUE,
 //     password VARCHAR(255) NOT NULL,
 //     phone VARCHAR(20),
-//     images blob
+//     images blob,
+//     role ENUM('user', 'admin', 'superadmin') NOT NULL DEFAULT 'user'
 // )";
 
 // $sql = "CREATE TABLE hotel_images (
