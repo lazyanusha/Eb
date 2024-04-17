@@ -1,7 +1,6 @@
 <?php
 session_start();
 include 'connection.php';
-
 // Check if form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve data from the form and sanitize inputs
@@ -56,4 +55,4 @@ $totalPrice = floatval(str_replace('$', '', $_POST['total-price']));
 } else {
     echo "Form not submitted.";
 }
-?>
+

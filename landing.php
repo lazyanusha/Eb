@@ -2,13 +2,14 @@
 session_start();
 $backgroundImagePath = "./images/hotel.png";
 include 'connection.php';
+include 'nav.php';
 
 
 // Check if success message is set
 if (isset($_SESSION['success_message'])) {
-    echo '<div class="success-message">' . $_SESSION['success_message'] . '</div>';
-    // Unset the session variable to remove it
-    unset($_SESSION['success_message']);
+  echo '<div class="success-message">' . $_SESSION['success_message'] . '</div>';
+  // Unset the session variable to remove it
+  unset($_SESSION['success_message']);
 }
 
 // Retrieve hotel information from the database
@@ -20,7 +21,7 @@ $hotels = [];
 while ($row_hotel = mysqli_fetch_assoc($result)) {
   $hotels[] = $row_hotel;
 }
-$userCity = isset ($_GET['location']) ? $_GET['location'] : "Thamel";
+$userCity = isset($_GET['location']) ? $_GET['location'] : "Thamel";
 
 // Adjust SQL query to select hotels based on their city or region
 $sql = "SELECT hotel_id, hotel_name, hotel_contact, hotel_address, photos, ratings FROM hotels WHERE hotel_address LIKE '%$userCity%'";
@@ -51,27 +52,7 @@ while ($row_hotel = mysqli_fetch_assoc($result)) {
 </head>
 
 <body>
-  <div>
-    <nav class="navigation_bar">
-      <div class="logo">
-        <a href="home.php"><img src="./images/logo3.png" alt="logo"></a>
-      </div>
-      <div class="menu">
-        <ul>
-          <li><a href="landing.php">Home</a></li>
-          <li><a href="Aboutus.php">About Us</a></li>
-          <li><a href="hotellist.php">Hotels</a></li>
-          <li><a href="contact_us.php">Contact Us</a></li>
-
-        </ul>
-      </div>
-      <div class="new">
-        <a href="logout.php">Log Out</a>
-      </div>
-    </nav>
-  </div>
-
-  <div class="first_section">
+ <div class="first_section">
     <div class="layer1">
       <h1>WELCOME TO EASY BOOKINGS!!</h1>
       <p>Enjoy your trip with safe and reliable shelters.!!</p>
@@ -103,7 +84,11 @@ while ($row_hotel = mysqli_fetch_assoc($result)) {
                   }
                   ?>
                 </div>
-                <p>Know more....</p>
+                <?php if (isset($_SESSION['email'])): ?>
+                  <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>" class="submit">Make Reservation</a>
+                <?php else: ?>
+                  <a href="login.php" class="submit">Login to Book</a>
+                <?php endif; ?>
                 <br />
               </div>
             </a>
@@ -144,9 +129,14 @@ while ($row_hotel = mysqli_fetch_assoc($result)) {
                 }
                 ?>
               </div>
-              <p>Know more....</p>
+              <?php if (isset($_SESSION['email'])): ?>
+                <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>" class="submit">Make Reservation</a>
+              <?php else: ?>
+                <a href="login.php" class="submit">Login to Book</a>
+              <?php endif; ?>
               <br />
             </div>
+
           </a>
         </div>
       <?php endforeach; ?>
@@ -178,9 +168,14 @@ while ($row_hotel = mysqli_fetch_assoc($result)) {
                     }
                     ?>
                   </div>
-                  <p class="know">Know more....</p>
+                  <?php if (isset($_SESSION['email'])): ?>
+                    <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>" class="submit">Make Reservation</a>
+                  <?php else: ?>
+                    <a href="login.php" class="submit">Login to Book</a>
+                  <?php endif; ?>
                   <br />
                 </div>
+
               </a>
             </div>
           <?php endif; ?>

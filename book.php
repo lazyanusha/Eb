@@ -386,15 +386,15 @@ if (isset($_SESSION['email'])) {
         }
     }
 
- 
+
     document.getElementById('room-type').addEventListener('change', updateRoomNumbers);
     updateRoomNumbers();
 
-        // Get today's date
-        var today = new Date().toISOString().split('T')[0];
-       
-        document.getElementById('check-in').setAttribute('min', today);
-        document.getElementById('check-out').setAttribute('min', today);
+    // Get today's date
+    var today = new Date().toISOString().split('T')[0];
+
+    document.getElementById('check-in').setAttribute('min', today);
+    document.getElementById('check-out').setAttribute('min', today);
 </script>
 
 </html>

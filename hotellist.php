@@ -1,5 +1,6 @@
 <?php
-include ('nav.php');
+session_start();
+include 'nav.php';
 include 'connection.php';
 
 // Check if the search form is submitted
