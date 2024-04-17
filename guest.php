@@ -1,68 +1,7 @@
 <?php
-session_start();
 include 'connection.php';
-
-$hotelName = $hotelLocation = '';
-
-if (isset($_GET['hotel_id'])) {
-    $hotel_id = $_GET['hotel_id'];
-
-    // Fetch hotel information
-    $sql_hotel = "SELECT * FROM hotels WHERE hotel_id = ?";
-    $stmt_hotel = mysqli_prepare($conn, $sql_hotel);
-    if ($stmt_hotel) {
-        mysqli_stmt_bind_param($stmt_hotel, "i", $hotel_id);
-        if (mysqli_stmt_execute($stmt_hotel)) {
-            $result_hotel = mysqli_stmt_get_result($stmt_hotel);
-            if ($row_hotel = mysqli_fetch_assoc($result_hotel)) {
-                $hotelName = $row_hotel['hotel_name'];
-                $hotelLocation = $row_hotel['hotel_address'];
-            } else {
-                echo "Hotel not found.";
-                exit;
-            }
-        } else {
-            echo "Error executing hotel query: " . mysqli_error($conn);
-            exit;
-        }
-        mysqli_stmt_close($stmt_hotel);
-    } else {
-        echo "Error preparing hotel query: " . mysqli_error($conn);
-        exit;
-    }
-}
-
-// Retrieve reservation ID from the database
-if (isset($_GET['reservation_id'])) {
-    $reservation_id = $_GET['reservation_id'];
-
-    $sql_reservation = "SELECT * FROM reservations WHERE reservation_id = ?";
-    $stmt_reservation = mysqli_prepare($conn, $sql_reservation);
-    if ($stmt_reservation) {
-        mysqli_stmt_bind_param($stmt_reservation, "i", $reservation_id);
-        if (mysqli_stmt_execute($stmt_reservation)) {
-            $result_reservation = mysqli_stmt_get_result($stmt_reservation);
-            if ($row_reservation = mysqli_fetch_assoc($result_reservation)) {
-                // Assign reservation details to $info array
-                $info = $row_reservation;
-            } else {
-                echo "Reservation not found.";
-                exit;
-            }
-        } else {
-            echo "Error executing reservation query: " . mysqli_error($conn);
-            exit;
-        }
-        mysqli_stmt_close($stmt_reservation);
-    } else {
-        echo "Error preparing reservation query: " . mysqli_error($conn);
-        exit;
-    }
-} else {
-    echo "Reservation ID not provided.";
-    exit;
-}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -74,6 +13,15 @@ if (isset($_GET['reservation_id'])) {
   <link rel="stylesheet" href="./css/dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
   <style>
+    a {
+      text-decoration: none;
+      color: black;
+    }
+
+    a:hover {
+      color: blueviolet;
+    }
+
     .dropdown-btn {
       cursor: pointer;
       position: relative;
@@ -106,20 +54,13 @@ if (isset($_GET['reservation_id'])) {
 <body>
   <div class="dash--heading">
     <div class="hotel--name">
-      <p>Easybookings</p>
+      <img src="./images/logo3.png" alt="img">
     </div>
-    <div class="second--part1">
-      <div class="search">
-        <form action="">
-          <input type="search" placeholder="search here" name="search" />
-          <button type="submit">search</button>
-        </form>
-      </div>
-      <div class="admin--profile">
-        <p>Welcome sweetpea.!</p>
-        <a href="g-setting.php"> <img src="../static/images/logo.png" alt="img"></a>
-      </div>
+    <div class="admin--profile">
+      <p>Welcome sweetpea.!</p>
+      <a href="g-setting.php" class="profile-picture"><img src="logo.png" alt="img"></a>
     </div>
+
   </div>
   <div class="dashboard">
     <div class="sidebar">
@@ -161,52 +102,21 @@ if (isset($_GET['reservation_id'])) {
     </div>
 
     <div class="second--section">
-      <div class="more--details">
-        <table border="1px" style="border-collapse: collapse; width: 100%">
-          <caption>
-            Past Records..
-          </caption>
-          <thead>
-            <tr>
-              <th rowspan="2">S.no</th>
-              <th colspan="4">Guests</th>
-              <th colspan="2">Date</th>
-              <th colspan="2">Room</th>
-              <th colspan="2">Hotel Information</th>
-            </tr>
-            <tr>
-              <th>Name</th>
-              <th>Contact</th>
-              <th>Email</th>
-              <th>Guest count</th>
-              <th>Check-in</th>
-              <th>Check-out</th>
-              <th>Room type</th>
-              <th>Room number</th>
-              <th>Hotel Name</th>
-              <th>Hotel Address</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><?php echo $info['reservation_id']; ?></td>
-              <td><?php echo $info['guest_name']; ?></td>
-              <td><?php echo $info['contact_information']; ?></td>
-              <td><?php echo $info.['email']; ?></td>
-              <td><?php echo $info['guests_num']; ?></td>
-              <td><?php echo $info['check_in_date']; ?></td>
-              <td><?php echo $info['check_out_date']; ?></td>
-              <td><?php echo $info['room_type']; ?></td>
-              <td><?php echo $info['room_number']; ?></td>
-              <td><?php echo $hotelName; ?></td>
-              <td><?php echo $hotelLocation; ?></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <?php
+      include 'reservation_details.php';
+      ?>
     </div>
   </div>
   <div class="footer"></div>
+
+  <script>
+    document.querySelectorAll('.dropdown-btn').forEach(btn => {
+      btn.addEventListener('click', function () {
+        const parent = this.parentElement;
+        parent.classList.toggle('active');
+      });
+    });
+  </script>
 </body>
 
 </html>

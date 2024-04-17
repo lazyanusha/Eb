@@ -1,6 +1,15 @@
 <?php
+session_start();
 $backgroundImagePath = "./images/hotel.png";
 include 'connection.php';
+
+
+// Check if success message is set
+if (isset($_SESSION['success_message'])) {
+    echo '<div class="success-message">' . $_SESSION['success_message'] . '</div>';
+    // Unset the session variable to remove it
+    unset($_SESSION['success_message']);
+}
 
 // Retrieve hotel information from the database
 $sql = "SELECT hotel_id, hotel_name, hotel_contact, hotel_address, photos, ratings FROM hotels"; // Adjust the query to fetch the required fields

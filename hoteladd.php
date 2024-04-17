@@ -1,7 +1,7 @@
 <?php
 session_start();
 // Check if a success message is set
-if (isset ($_SESSION['success_message'])) {
+if (isset($_SESSION['success_message'])) {
     // Display the success message
     echo "<div class='success-message'>" . $_SESSION['success_message'] . "</div>";
 
@@ -26,18 +26,11 @@ if (isset ($_SESSION['success_message'])) {
         <div class="hotel--name">
             <img src="./images/logo3.png" alt="img">
         </div>
-        <div class="second--part1">
-            <div class="search">
-                <form action="">
-                    <input type="search" placeholder="search here" name="search" />
-                    <button type="submit">search</button>
-                </form>
-            </div>
-            <div class="admin--profile">
-                <p>Welcome sweetpea.!</p>
-                <a href="g-setting.php"> <img src="./images/log.png" alt="img"></a>
-            </div>
+        <div class="admin--profile">
+            <p>Welcome sweetpea.!</p>
+            <a href="g-setting.php" class="profile-picture"><img src="logo.png" alt="img"></a>
         </div>
+
     </div>
 
     <!-- Dashboard Container -->
@@ -58,7 +51,7 @@ if (isset ($_SESSION['success_message'])) {
                         <i class="fas fa-chevron-right"></i>
                     </div>
                     <ul class="dropdown-content">
-                        <li><a href="booking_request.php">Booking Request s</a></li>
+                        <li><a href="booking_request.php">Booking Requests</a></li>
                         <li><a href="all_bookings.php">All Bookings</a></li>
                     </ul>
                 </li>
@@ -143,9 +136,9 @@ if (isset ($_SESSION['success_message'])) {
                         </div>
                     </div>
                     <div class="elements">
-                            <label for="hotelContact">Ratings:</label><br>
-                            <input type="number" name="ratings" required>
-                        </div>
+                        <label for="hotelContact">Ratings:</label><br>
+                        <input type="number" name="ratings" required>
+                    </div>
                     <hr>
                     <div class="elements">
                         <button type="submit">Save</button>

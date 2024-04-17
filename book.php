@@ -47,14 +47,20 @@ if (isset($_GET['hotel_id'])) {
         echo "Error preparing services query: " . mysqli_error($conn);
     }
 
-    $sql_rooms = "SELECT room_type, quantity FROM rooms WHERE hotel_id = ?";
+    $sql_rooms = "SELECT room_type, quantity, price FROM rooms WHERE hotel_id = ?";
     $stmt_rooms = mysqli_prepare($conn, $sql_rooms);
     if ($stmt_rooms) {
         mysqli_stmt_bind_param($stmt_rooms, "i", $hotel_id);
         if (mysqli_stmt_execute($stmt_rooms)) {
             $result_rooms = mysqli_stmt_get_result($stmt_rooms);
-            while ($row_rooms = mysqli_fetch_assoc($result_rooms)) {
-                $rooms[$row_rooms['room_type']] = $row_rooms['quantity'];
+            if (mysqli_num_rows($result_rooms) > 0) {
+                while ($row_rooms = mysqli_fetch_assoc($result_rooms)) {
+                    $rooms[$row_rooms['room_type']] = $row_rooms['quantity'];
+                    // Assign price to each room type
+                    $prices[$row_rooms['room_type']] = $row_rooms['price'];
+                }
+            } else {
+                echo "No rooms found for this hotel.";
             }
         } else {
             echo "Error executing rooms query: " . mysqli_error($conn);
@@ -253,15 +259,19 @@ if (isset($_SESSION['email'])) {
                     <input type="hidden" name="fullname" value="<?php echo $guestName; ?>">
                     <input type="hidden" name="contact" value="<?php echo $contact; ?>">
                     <input type="hidden" name="email" value="<?php echo isset($userEmail) ? $userEmail : ''; ?>">
+
+                    <!-- Room Type Selection -->
                     <label for="room-type" class="reservation--label">Type of room:</label>
-                    <select class="reservation--info" name="room-type" id="room-type">
+                    <select class="reservation--info" name="room-type" id="room-type"
+                        onchange="updatePriceAndOptions()">
                         <option value="" disabled selected>Select type of room</option>
                         <?php foreach ($rooms as $roomType => $quantity): ?>
-                            <option value="<?php echo $roomType; ?>">
-                                <?php echo ucfirst($roomType); ?> Room
+                            <option value="<?php echo $roomType; ?>" data-price="<?php echo $prices[$roomType]; ?>">
+                                <?php echo ucfirst($roomType); ?> Room - $<?php echo $prices[$roomType]; ?> per night
                             </option>
                         <?php endforeach; ?>
                     </select>
+
                     <label for="bed-type" class="reservation--label">Bedding type:</label>
                     <select class="reservation--info" name="bed-type" id="bed-type">
                         <option value="" disabled selected>Select bedding type</option>
@@ -269,15 +279,12 @@ if (isset($_SESSION['email'])) {
                         <option value="double">Double Bed</option>
                         <option value="triple">Triple Bed</option>
                     </select>
+
                     <label for="number-of-room" class="reservation--label">Room Number:</label>
                     <select class="reservation--info" name="number-of-room" id="number-of-room">
                         <option value="" disabled selected>Select room number</option>
-                        <?php for ($i = 1; $i <= $quantity; $i++): ?>
-                            <option value="<?php echo $i; ?>">
-                                <?php echo $i; ?>
-                            </option>
-                        <?php endfor; ?>
                     </select>
+
                     <label for="guest">Guests:</label><br>
                     <label for="children" class="reservation--label">Children:</label>
                     <input type="number" name="children" id="children">
@@ -286,10 +293,10 @@ if (isset($_SESSION['email'])) {
                     <input type="number" name="adult" id="adult">
 
                     <label for="check-in" class="reservation--label">Check-in:</label>
-                    <input type="date" name="check-in" id="check-in">
+                    <input type="date" name="check-in" id="check-in" onchange="updatePriceAndOptions()">
 
                     <label for="check-out" class="reservation--label">Check-out:</label>
-                    <input type="date" name="check-out" id="check-out">
+                    <input type="date" name="check-out" id="check-out" onchange="updatePriceAndOptions()">
 
                     <label for="contact">Special Request:</label>
                     <select class="reservation--info" name="special-request" id="special-request">
@@ -297,14 +304,19 @@ if (isset($_SESSION['email'])) {
                         <option value="yes">Yes</option>
                         <option value="no">No</option>
                     </select>
-                    <label for="price">Total Price:</label>
-                    <input type="number" name="total-price">
+
+                    <label for="room-price" class="reservation--label">Price per night:</label>
+                    <input type="text" name="total-price" id="room-price" class="reservation--info" readonly>
+                    <input type="hidden" name="price-per-night" id="price-per-night">
+
                     <label for="payment">Payment Method:</label>
                     <select class="reservation--info" name="payment" id="payment">
                         <option value="cash">Cash</option>
                         <option value="online">Online payment</option>
                     </select>
+
                     <button type="submit" class="submit">Check Availability</button>
+
                 </div>
             </form>
         </div>
@@ -326,6 +338,63 @@ if (isset($_SESSION['email'])) {
             autoplaySpeed: 3000
         });
     });
+
+    // Function to update price based on the selected room type and number of days
+    function updatePriceAndOptions() {
+        var roomTypeSelect = document.getElementById('room-type');
+        var priceDisplay = document.getElementById('room-price');
+        var priceInput = document.getElementById('price-per-night');
+        var checkInDate = new Date(document.getElementById('check-in').value);
+        var checkOutDate = new Date(document.getElementById('check-out').value);
+
+        // Get the selected room type and its price
+        var selectedOption = roomTypeSelect.options[roomTypeSelect.selectedIndex];
+        var pricePerNight = parseFloat(selectedOption.getAttribute('data-price'));
+
+        // Calculate the number of days
+        var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+        var diffDays = Math.round(Math.abs((checkOutDate - checkInDate) / oneDay));
+
+        // If check-out date is the same as check-in date, consider it as one night stay
+        if (diffDays === 0) {
+            diffDays = 1; // Consider it as one night stay
+        }
+
+        // Calculate the total price
+        var totalPrice = pricePerNight * diffDays;
+
+        // Update the displayed price
+        priceDisplay.value = '$' + totalPrice.toFixed(2);
+        priceInput.value = totalPrice.toFixed(2);
+    }
+
+    // Function to update room numbers based on the selected room type
+    function updateRoomNumbers() {
+        var roomType = document.getElementById('room-type').value;
+        var maxRooms = <?php echo json_encode($rooms); ?>[roomType];
+
+        // Clear the existing options
+        var selectRoom = document.getElementById('number-of-room');
+        selectRoom.innerHTML = '';
+
+        // Generate options for room numbers
+        for (var i = 1; i <= maxRooms; i++) {
+            var option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            selectRoom.appendChild(option);
+        }
+    }
+
+ 
+    document.getElementById('room-type').addEventListener('change', updateRoomNumbers);
+    updateRoomNumbers();
+
+        // Get today's date
+        var today = new Date().toISOString().split('T')[0];
+       
+        document.getElementById('check-in').setAttribute('min', today);
+        document.getElementById('check-out').setAttribute('min', today);
 </script>
 
 </html>

@@ -1,3 +1,7 @@
+<?php
+include 'connection.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -8,6 +12,15 @@
   <link rel="stylesheet" href="./css/dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
   <style>
+    a {
+      text-decoration: none;
+      color: black;
+    }
+
+    a:hover {
+      color: blueviolet;
+    }
+
     .dropdown-btn {
       cursor: pointer;
       position: relative;
@@ -42,18 +55,11 @@
     <div class="hotel--name">
       <img src="./images/logo3.png" alt="img">
     </div>
-    <div class="second--part1">
-      <div class="search">
-        <form action="">
-          <input type="search" placeholder="search here" name="search" />
-          <button type="submit">search</button>
-        </form>
-      </div>
-      <div class="admin--profile">
-        <p>Welcome sweetpea.!</p>
-        <a href="g-setting.php"> <img src="./images/log.png" alt="img"></a>
-      </div>
-    </div>
+    <div class="admin--profile">
+    <p>Welcome sweetpea.!</p>
+    <a href="g-setting.php" class="profile-picture"><img src="logo.png" alt="img"></a>
+</div>
+
   </div>
   <div class="dashboard">
     <!-- Sidebar Section -->
@@ -124,47 +130,9 @@
         </div>
       </div>
       <div class="more--details">
-        <table border="1px" style="border-collapse: collapse; width: 100%">
-          <caption>
-            Past Records..
-          </caption>
-          <thead>
-            <tr>
-              <th rowspan="2">S.no</th>
-              <th colspan="4">Guests</th>
-              <th colspan="2">Date</th>
-              <th colspan="2">Room</th>
-              <th colspan="2">Duration</th>
-            </tr>
-            <tr>
-              <th>Name</th>
-              <th>Contact</th>
-              <th>Email</th>
-              <th>Guest count</th>
-              <th>Check-in</th>
-              <th>Check-out</th>
-              <th>Room type</th>
-              <th>Room number</th>
-              <th>Check-in</th>
-              <th>Check-out</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>Sumina Rokaha</td>
-              <td>9803428166</td>
-              <td>sumina@gmail.com</td>
-              <td>1</td>
-              <td>18/2/2024</td>
-              <td>18/2/2024</td>
-              <td>Normal</td>
-              <td>101</td>
-              <td>07:00</td>
-              <td>23:00</td>
-            </tr>
-          </tbody>
-        </table>
+        <?php
+        include 'reservation_details.php';
+        ?>
       </div>
     </div>
   </div>

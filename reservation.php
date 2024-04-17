@@ -1,16 +1,14 @@
 <?php
 session_start();
 include 'connection.php';
-var_dump($_POST);
-echo $_SESSION['email'];
 
 // Check if form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Retrieve data from the form
-    $fullname = $_POST['fullname']; 
+    // Retrieve data from the form and sanitize inputs
+    $fullname = mysqli_real_escape_string($conn, $_POST['fullname']);
     $hotel_id = $_POST['hotel_id'];
-    $contact = $_POST['contact'];
-    $userEmail = $_SESSION['email'] ;
+    $contact = mysqli_real_escape_string($conn, $_POST['contact']);
+    $userEmail = $_SESSION['email'];
     $roomType = $_POST['room-type'];
     $bedType = $_POST['bed-type'];
     $roomNumber = $_POST['number-of-room'];
@@ -18,8 +16,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $adult = $_POST['adult'];
     $checkIn = $_POST['check-in'];
     $checkOut = $_POST['check-out'];
-    $specialRequest = $_POST['special-request'];
-    $totalPrice = $_POST['total-price'];
+    $specialRequest =$_POST['special-request'];
+    // Remove the '$' sign from the total price
+$totalPrice = floatval(str_replace('$', '', $_POST['total-price']));
+
     $paymentMethod = $_POST['payment'];
 
     // Calculate total number of guests
@@ -34,15 +34,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Get the last inserted ID (reservation_id)
             $reservation_id = mysqli_insert_id($conn);
             $_SESSION['reservation_id'] = $reservation_id;
-            echo "Reservation successfully added. Reservation ID: " . $reservation_id;
+            $_SESSION['success_message'] = "Reservation successful!";
+
+            // Redirect to landing page with success message
+            header("Location: landing.php?success_message=");
+            exit; // Make sure to exit after redirection
         } else {
-            echo "Error adding reservation: " . mysqli_error($conn);
+            // Log error for debugging
+            error_log("Error adding reservation: " . mysqli_error($conn));
+            // Display error message
+            echo "An error occurred while processing your reservation. Please try again later.";
         }
 
         mysqli_stmt_close($stmt_reservation);
     } else {
-        echo "Error preparing reservation query: " . mysqli_error($conn);
+        // Log error for debugging
+        error_log("Error preparing reservation query: " . mysqli_error($conn));
+        // Display error message
+        echo "An error occurred while processing your reservation. Please try again later.";
     }
 } else {
     echo "Form not submitted.";
 }
+?>
