@@ -52,7 +52,7 @@ while ($row_hotel = mysqli_fetch_assoc($result)) {
 </head>
 
 <body>
- <div class="first_section">
+  <div class="first_section">
     <div class="layer1">
       <h1>WELCOME TO EASY BOOKINGS!!</h1>
       <p>Enjoy your trip with safe and reliable shelters.!!</p>

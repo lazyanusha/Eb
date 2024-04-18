@@ -60,8 +60,7 @@ body {
 }
 
 .layer1 {
-  background-color: #2b3454;
-  opacity: 0.5;
+  background-color: rgb(43, 52, 84, 0.5);
   height: 100vh;
   width: 100%;
   display: flex;
