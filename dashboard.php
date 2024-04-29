@@ -56,7 +56,7 @@ include 'connection.php';
       <img src="./images/logo3.png" alt="img">
     </div>
     <div class="admin--profile">
-    <p>Welcome sweetpea.!</p>
+    <p>Welcome Admin.!</p>
     <a href="g-setting.php" class="profile-picture"><img src="logo.png" alt="img"></a>
 </div>
 

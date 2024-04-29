@@ -4,14 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>EasyBookings - Sign Up</title>
-    <link rel="stylesheet" href="./css/login.css">
+    <link rel="stylesheet" href="./css/log.css">
   </head>
 
   <body>
     <div class="form">
     <form action="adminverify.php" method="post" onsubmit="return validateForm()">
 
-      <h2 class="h2-2">Log In</h2>
+      <h2 class="h2-2">Admin Login</h2>
       <div class="login--3">
       <input type="email" id="email" name="email" placeholder="Email" required />
         <input type="password" id="password" name="password" required placeholder="Password" />
