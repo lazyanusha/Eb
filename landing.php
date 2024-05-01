@@ -5,18 +5,14 @@ include 'connection.php';
 include 'nav.php';
 
 
-// Check if success message is set
 if (isset($_SESSION['success_message'])) {
-  echo '<div class="success-message">' . $_SESSION['success_message'] . '</div>';
-  // Unset the session variable to remove it
+  echo "<script>alert('" . $_SESSION['success_message'] . "');</script>";
   unset($_SESSION['success_message']);
 }
 
 // Retrieve hotel information from the database
 $sql = "SELECT hotel_id, hotel_name, hotel_contact, hotel_address, photos, ratings FROM hotels"; // Adjust the query to fetch the required fields
 $result = mysqli_query($conn, $sql);
-
-// Fetch all hotel data into an array
 $hotels = [];
 while ($row_hotel = mysqli_fetch_assoc($result)) {
   $hotels[] = $row_hotel;
@@ -26,11 +22,9 @@ $userCity = isset($_GET['location']) ? $_GET['location'] : "Thamel";
 // Adjust SQL query to select hotels based on their city or region
 $sql = "SELECT hotel_id, hotel_name, hotel_contact, hotel_address, photos, ratings FROM hotels WHERE hotel_address LIKE '%$userCity%'";
 $result = mysqli_query($conn, $sql);
-
-// Fetch hotels
 $nearbyHotels = [];
 while ($row_hotel = mysqli_fetch_assoc($result)) {
-  $nearbyHotels[] = $row_hotel; // Add hotel to nearby hotels array
+  $nearbyHotels[] = $row_hotel;
 }
 
 ?>

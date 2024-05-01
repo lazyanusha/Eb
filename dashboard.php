@@ -56,9 +56,9 @@ include 'connection.php';
       <img src="./images/logo3.png" alt="img">
     </div>
     <div class="admin--profile">
-    <p>Welcome Admin.!</p>
-    <a href="g-setting.php" class="profile-picture"><img src="logo.png" alt="img"></a>
-</div>
+      <p>Welcome Admin.!</p>
+      <a href="g-setting.php" class="profile-picture"><img src="logo.png" alt="img"></a>
+    </div>
 
   </div>
   <div class="dashboard">
@@ -69,18 +69,11 @@ include 'connection.php';
         <li><a href="dashboard.php">
             <div>Dashboard</div>
           </a></li>
-        <li><a href="guest.php">
-            <div>Guests</div>
-          </a></li>
-        <li class="dropdown">
-          <div class="dropdown-btn">
-            Booking Manage
-            <i class="fas fa-chevron-right"></i>
-          </div>
-          <ul class="dropdown-content">
-            <li><a href="booking_request.php">Booking Requests</a></li>
-            <li><a href="all_bookings.php">All Bookings</a></li>
-          </ul>
+        <li class="dropdown"><a href="bookingmanage.php">
+            <div>
+              Booking Manage
+            </div>
+          </a>
         </li>
         <li><a href="rooms.php">
             <div>Rooms</div>

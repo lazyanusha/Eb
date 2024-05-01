@@ -28,7 +28,7 @@
           </ul>
         </div>
         <div class="new">
-          <a href="logout.php">Log Out</a>
+          <a href="logout.php" onclick="confirmLogout()">Log Out</a>
         </div>
       </nav>
     </div>
@@ -54,6 +54,16 @@
       </nav>
     </div>
   <?php endif; ?>
+
+  <script>
+        function confirmLogout() {
+            var logout = confirm("Are you sure you want to logout?");
+            if (logout) {
+                window.location.href = "logout.php";
+            }
+        }
+        
+    </script>
 
 
 </body>

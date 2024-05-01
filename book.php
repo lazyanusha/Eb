@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+
 include 'connection.php';
 $hotelName = $hotelLocation = $hotelEmail = $hotelContact = $description = '';
 $services = $rooms = array();
@@ -70,6 +71,7 @@ if (isset($_GET['hotel_id'])) {
         echo "Error preparing rooms query: " . mysqli_error($conn);
     }
 
+    // Fetch image filenames from the database
     $sql_images = "SELECT image_name FROM hotel_images WHERE hotel_id = ?";
     $stmt_images = mysqli_prepare($conn, $sql_images);
     if ($stmt_images) {
@@ -77,7 +79,8 @@ if (isset($_GET['hotel_id'])) {
         if (mysqli_stmt_execute($stmt_images)) {
             $result_images = mysqli_stmt_get_result($stmt_images);
             while ($row_images = mysqli_fetch_assoc($result_images)) {
-                $images[] = $row_images['image_name'];
+                // Construct file paths for the images
+                $images[] = "uploads/" . $row_images['image_name'];
             }
         } else {
             echo "Error executing image query: " . mysqli_error($conn);
@@ -86,6 +89,8 @@ if (isset($_GET['hotel_id'])) {
     } else {
         echo "Error preparing image query: " . mysqli_error($conn);
     }
+
+
 } else {
     echo "Hotel ID not found in query string.";
 }
@@ -186,10 +191,13 @@ if (isset($_SESSION['email'])) {
         <div class="carousel-container">
             <div class="carousel">
                 <?php foreach ($images as $image): ?>
-                    <div><a href="<?php echo $image; ?>"><img src="<?php echo $image; ?>" alt="Hotel Image"
-                                loading="lazy"></a>
+                    <div>
+                        <a href="<?php echo $image; ?>">
+                            <img src="<?php echo $image; ?>" alt="Hotel Image" loading="lazy">
+                        </a>
                     </div>
                 <?php endforeach; ?>
+
             </div>
         </div>
     </div>
@@ -298,13 +306,6 @@ if (isset($_SESSION['email'])) {
                     <label for="check-out" class="reservation--label">Check-out:</label>
                     <input type="date" name="check-out" id="check-out" onchange="updatePriceAndOptions()">
 
-                    <label for="contact">Special Request:</label>
-                    <select class="reservation--info" name="special-request" id="special-request">
-                        <option value="" disabled selected>Any special requests?</option>
-                        <option value="yes">Yes</option>
-                        <option value="no">No</option>
-                    </select>
-
                     <label for="room-price" class="reservation--label">Price per night:</label>
                     <input type="text" name="total-price" id="room-price" class="reservation--info" readonly>
                     <input type="hidden" name="price-per-night" id="price-per-night">
@@ -359,8 +360,6 @@ if (isset($_SESSION['email'])) {
         if (diffDays === 0) {
             diffDays = 1; // Consider it as one night stay
         }
-
-        // Calculate the total price
         var totalPrice = pricePerNight * diffDays;
 
         // Update the displayed price
@@ -391,10 +390,28 @@ if (isset($_SESSION['email'])) {
     updateRoomNumbers();
 
     // Get today's date
-    var today = new Date().toISOString().split('T')[0];
+    // Function to update the minimum date for check-out
+    function updateMinCheckoutDate() {
+        var checkinInput = document.getElementById('check-in');
+        var checkoutInput = document.getElementById('check-out');
 
-    document.getElementById('check-in').setAttribute('min', today);
-    document.getElementById('check-out').setAttribute('min', today);
+        // Get the value of the check-in date input
+        var checkinDate = new Date(checkinInput.value);
+
+        // Calculate the minimum check-out date (next day of check-in)
+        var minCheckoutDate = new Date(checkinDate);
+        minCheckoutDate.setDate(checkinDate.getDate() + 1);
+
+        // Format the minimum check-out date to 'YYYY-MM-DD'
+        var minCheckoutDateString = minCheckoutDate.toISOString().split('T')[0];
+
+        // Set the minimum date for check-out input
+        checkoutInput.min = minCheckoutDateString;
+    }
+
+    // Attach an event listener to the check-in input to trigger the updateMinCheckoutDate function
+    document.getElementById('check-in').addEventListener('change', updateMinCheckoutDate);
+
 </script>
 
 </html>

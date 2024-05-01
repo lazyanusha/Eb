@@ -8,7 +8,6 @@ $stmt_reservation = mysqli_prepare($conn, $sql_reservation);
 if ($stmt_reservation) {
     if (mysqli_stmt_execute($stmt_reservation)) {
         $result_reservation = mysqli_stmt_get_result($stmt_reservation);
-        // Fetch all reservation records
         $reservations = [];
         while ($row_reservation = mysqli_fetch_assoc($result_reservation)) {
             $reservations[] = $row_reservation;
@@ -36,7 +35,7 @@ if ($stmt_reservation) {
 <body>
     <div class="second--section">
         <div class="heading">
-            <p>Records...</p>
+            <p>Booking Details...</p>
             <div class="search">
                 <form action="">
                     <input type="search" placeholder="search here" name="search" />
@@ -45,14 +44,16 @@ if ($stmt_reservation) {
             </div>
         </div>
         <div class="more--details">
+
             <table border="1px" style="border-collapse: collapse; width: 100%">
                 <thead>
                     <tr>
-                        <th rowspan="2">S.no</th>
+                        <th rowspan="2">Booking id</th>
                         <th colspan="4">Guests</th>
                         <th colspan="2">Date</th>
                         <th colspan="2">Room</th>
-                        <th colspan="2">Hotel Information</th>
+                        <th rowspan="2">Hotel Name</th>
+                        <th rowspan="2">Booking Status</th>
                     </tr>
                     <tr>
                         <th>Name</th>
@@ -63,8 +64,7 @@ if ($stmt_reservation) {
                         <th>Check-out</th>
                         <th>Room type</th>
                         <th>Room number</th>
-                        <th>Hotel Name</th>
-                        <th>Hotel Address</th>
+
                     </tr>
                 </thead>
                 <tbody>
@@ -82,13 +82,59 @@ if ($stmt_reservation) {
                             <td> <a
                                     href="book.php?hotel_id=<?php echo $info['hotel_id']; ?>"><?php echo $info['hotel_name']; ?></a>
                             </td>
-                            <td><?php echo $info['hotel_address']; ?></td>
+                            <td>
+                                <select id="status" name="status"
+                                    onchange="changeBookingStatus(<?php echo $row['reservation_id']; ?>, this.value)">
+                                    <option value="Pending" <?php if ($info['reservation_status'] == "Pending")
+                                        echo 'selected'; ?>>Pending</option>
+                                    <option value="Approved" <?php if ($info['reservation_status'] == "Approved")
+                                        echo 'selected'; ?>>Approved</option>
+                                    <option value="Denied" <?php if ($info['reservation_status'] == "Denied")
+                                        echo 'selected'; ?>>Denied</option>
+                                </select>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
     </div>
+    <script>
+        function searchTable() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("myTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[2];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        function changeBookingStatus(bookingId, status) {
+            $bstatus = $_POST["reservation_status"];
+            $bid = $_POST["reservation_id"];
+            $sql = "UPDATE vehicle SET `reservation_status`= 'reservation_status'
+            WHERE`reservation_id` = '$reservation_id'";
+            $result = mysqli_query($conn, $sql);
+            if ($result) {
+                header("Location: bookingmanage.php");
+
+
+            } else {
+                echo "Error: ".mysqli_error($conn);
+            }
+
+        }
+    </script>
 </body>
 
 </html>

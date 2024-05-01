@@ -43,7 +43,7 @@
         <div class="password-container">
           <input type="password" class="password" placeholder="Enter your password" name="password" required>
           <i class="fas fa-eye-slash togglePassword"></i>
-          <?php if (isset ($error_message)): ?>
+          <?php if (isset($error_message)): ?>
             <div class="error-message">
               <?php echo $error_message; ?>
             </div>
@@ -51,11 +51,10 @@
 
         </div>
 
-        <button type="submit" class="button">Log In</button>
+        <button type="submit" class="button" onclick="confirmLogin()">Log In</button>
       </div>
+      <p>or</p>
       <div class="sign">
-        <a href="forgot.php">Forgotten password?</a>
-        <p>or</p>
         <button class="button-1">
           <a href="signup.php">Create an account?</a>
         </button>
@@ -65,6 +64,14 @@
 
 
   <script src="./js/script.js"></script>
+  <script>
+    function confirmLogin() {
+      var logout = confirm("Welcome...!!");
+      if (logout) {
+        window.location.href = "landing.php";
+      }
+    }
+  </script>
 
 </body>
 
