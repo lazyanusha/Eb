@@ -1,28 +1,20 @@
 <?php
 session_start();
-include 'nav.php';
 include 'connection.php';
+include 'nav.php';
 
-// Check if the search form is submitted
-if (isset ($_POST['query'])) {
-    // Sanitize the search query
+if (isset($_POST['query'])) {
     $search_query = mysqli_real_escape_string($conn, $_POST['query']);
 
-    // Construct the SQL query to search for hotels
     $sql = "SELECT * FROM hotels WHERE hotel_name LIKE '%$search_query%' OR hotel_address LIKE '%$search_query%'";
     $result = mysqli_query($conn, $sql);
-
-    // Fetch the filtered hotel data into an array
     $filtered_hotels = [];
     while ($row_hotel = mysqli_fetch_assoc($result)) {
         $filtered_hotels[] = $row_hotel;
     }
 } else {
-    // Retrieve all hotel information from the database
     $sql = "SELECT * FROM hotels";
     $result = mysqli_query($conn, $sql);
-
-    // Fetch all hotel data into an array
     $filtered_hotels = [];
     while ($row_hotel = mysqli_fetch_assoc($result)) {
         $filtered_hotels[] = $row_hotel;
@@ -40,7 +32,7 @@ if (isset ($_POST['query'])) {
     <link rel="stylesheet" href="./css/home.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
-        button{
+        button {
             color: #343434;
             font-size: 14px;
             letter-spacing: 1px;
@@ -53,9 +45,9 @@ if (isset ($_POST['query'])) {
 <body>
     <div class="container1">
         <div class="search-container">
-            <h2 style="text-decoration: underline;" >Hotels list !!</h2>
+            <h2 style="text-decoration: underline;">Hotels list !!</h2>
             <form action="hotellist.php" method="post">
-                <input type="text" name="query" id="search-bar" placeholder="Search for hotels" autocomplete="off">
+                <input type="text" name="query" id="search-bar" placeholder="Search for hotels" autocomplete="on">
                 <button type="submit">Search</button>
             </form>
         </div>
@@ -82,8 +74,12 @@ if (isset ($_POST['query'])) {
                                 }
                                 ?>
                             </div>
-                            <p>Know more....</p>
-                            <br />
+                            <?php if (isset($_SESSION['email'])): ?>
+                                <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>" class="submit">Make
+                                    Reservation</a>
+                            <?php else: ?>
+                                <a href="login.php" class="submit">Login to Book</a>
+                            <?php endif; ?>
                         </div>
                     </a>
                 </div>

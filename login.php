@@ -51,7 +51,7 @@
 
         </div>
 
-        <button type="submit" class="button" onclick="confirmLogin()">Log In</button>
+        <button type="submit" class="button" >  Log In</button>
       </div>
       <p>or</p>
       <div class="sign">
@@ -64,14 +64,6 @@
 
 
   <script src="./js/script.js"></script>
-  <script>
-    function confirmLogin() {
-      var logout = confirm("Welcome...!!");
-      if (logout) {
-        window.location.href = "landing.php";
-      }
-    }
-  </script>
 
 </body>
 

@@ -8,7 +8,14 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-
+  flex-wrap: wrap;
+}
+a {
+  text-decoration: none;
+  color: black;
+}
+a:hover {
+  color: #8d69c0;
 }
 .dash--heading {
   color: white;
@@ -51,6 +58,11 @@ body {
   border: 2px solid white;
   border-radius: 50%;
   padding: 2px;
+}
+.default-profile-image {
+  padding: 15px;
+  border: 2px solid white;
+  border-radius: 50%;
 }
 
 .admin--profile img {
@@ -166,86 +178,76 @@ td {
 
 /* css for hoteladd.php start */
 
-.dropdown-btn {
-  cursor: pointer;
-  position: relative;
-  color: #6869ce;
-}
-
-.dropdown-btn:hover {
-  color: #f9f9f9;
-}
-.dropdown-btn i {
-  position: absolute;
-  color: #6869ce;
-  font-size: 16px;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  transition: transform 0.3s ease;
-}
-
-.dropdown-content {
-  display: none;
-  position: inherit;
-}
-
-.dropdown.active .dropdown-content {
-  display: block;
-}
-
-.dropdown.active .dropdown-btn i {
-  transform: translateY(-50%) rotate(90deg);
-}
-
 .part {
   display: flex;
   justify-content: space-between;
-}
-
-.part--zero {
-  display: flex;
   flex-wrap: wrap;
+  padding: 20px 30px;
 }
 
-.part--one {
-  width: 20%;
-  background-color: #f9f9f9;
-  padding: 10px;
-}
-
-.part--one ul li {
-  list-style-type: none;
-  padding: 10px 0;
+.part button {
+  padding: 6px 25px;
+  cursor: pointer;
+  background: linear-gradient(to top, #7969c7, #2b3454);
+  color: #f9f9f9;
 }
 
 .part--two {
-  width: 75%;
+  width: auto;
+  padding: 30px 80px 30px 50px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  overflow: hidden;
 }
-
 .container {
   display: flex;
-  flex-wrap: wrap;
-  column-gap: 40px;
+  justify-content: space-between;
 }
-
-.elements {
-  width: 47%;
-  padding: 30px;
-}
-
 .elements input {
   width: 100%;
   padding: 10px;
+  margin-top: 10px;
 }
 
 .elements button {
   padding: 15px 45px;
 }
+.elements,
+.service {
+  padding: 20px 0;
+}
+.service button {
+  padding: 6px 20px;
+  margin-top: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #7969c7;
+  cursor: pointer;
+}
 
-.description {
-  padding: 10px 30px;
-  width: 100%;
+.submit button {
+  margin-top: 10px;
+  padding: 10px 50px;
+  background-color: #f9f9f9;
+  border: 1px solid #7969c7;
+  cursor: pointer;
+}
+.divimages input {
+  padding: 0 20px;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+.divimages {
+  padding: 10px 0;
+}
+
+.services-container,
+.room-container {
+  row-gap: 20px;
+  display: flex;
+  padding: 20px;
 }
 
 textarea {
@@ -253,28 +255,15 @@ textarea {
   padding: 10px;
   border: 1px solid #ccc;
   resize: none;
+  margin: 10px 0;
 }
 
-.remove-btn {
-  margin-left: auto;
-  color: red;
-  font-size: 14px;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-}
-
-.room {
-  width: 49%;
-}
-
-.room input {
-  width: 100%;
-  padding: 10px;
-}
-
-.elements select {
-  padding: 10px 40px;
+.room-field select,
+.room-field input,
+.service-field input {
+  padding: 6px 40px;
+  background-color: #f9f9f9;
+  border: 1px solid #7969c7;
 }
 
 .divimages {
@@ -285,6 +274,10 @@ textarea {
   max-width: 300px;
   max-height: 300px;
   margin-top: 10px;
+}
+
+hr {
+  margin-bottom: 10px;
 }
 
 /* css for hoteladd.php end */

@@ -1,8 +1,11 @@
 <?php
 session_start();
-
-
 include 'connection.php';
+if (!isset($_SESSION['email'])) {
+    header("location: login.php");
+    exit; 
+}
+
 $hotelName = $hotelLocation = $hotelEmail = $hotelContact = $description = '';
 $services = $rooms = array();
 $images = array();
@@ -97,7 +100,6 @@ if (isset($_GET['hotel_id'])) {
 
 if (isset($_SESSION['email'])) {
     $userEmail = $_SESSION['email'];
-
     $sql_user = "SELECT fullname, phone FROM users WHERE email = ?";
     $stmt_user = mysqli_prepare($conn, $sql_user);
     if ($stmt_user) {
@@ -163,6 +165,25 @@ if (isset($_SESSION['email'])) {
         .slick-prev::before,
         .slick-next::before {
             content: none;
+        }
+
+        .lists{
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            row-gap: 10px;
+        }
+        
+        .lists ul{
+            display: flex;
+            flex-direction: column;
+            row-gap: 10px;
+        }   
+        .list ul{ 
+            display: flex;
+            flex-wrap: wrap;
+            column-gap: 40px;
+            row-gap: 3px;
         }
     </style>
 </head>
@@ -230,7 +251,7 @@ if (isset($_SESSION['email'])) {
                         <?php endforeach; ?>
                     </ul>
                 </div>
-                <div class="list">
+                <div class="lists">
                     <p><strong>Rooms Available</strong></p>
                     <ul>
                         <?php foreach ($rooms as $roomType => $quantity): ?>

@@ -6,36 +6,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $userLoginPassword = $_POST['password'];
 
-    // Prepare and execute the SELECT query using a prepared statement
-    $stmt = $conn->prepare("SELECT user_id, password FROM users WHERE email = ?");
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // Check if the email exists in either 'users' or 'admins' table
+    $query = "SELECT user_id, password, 'user' as type FROM users WHERE email = '$email' 
+              UNION ALL 
+              SELECT admin_id, password, 'admin' as type FROM admins WHERE email = '$email'";
+    $result = mysqli_query($conn, $query);
 
-    if ($result->num_rows === 1) {
-        $row = $result->fetch_assoc();
-        $storedHashedPassword = $row['password'];
+    if (mysqli_num_rows($result) === 1) {
+        $row = mysqli_fetch_assoc($result);
+        $storedPassword = $row['password'];
 
-        // Verify the password
-        if (password_verify($userLoginPassword, $storedHashedPassword)) {
+        if (($row['type'] === 'user' && password_verify($userLoginPassword, $storedPassword)) ||
+            ($row['type'] === 'admin' && $userLoginPassword === $storedPassword)) {
             $_SESSION['email'] = $email;
-            header("Location: landing.php");
+            if ($row['type'] === 'admin') {
+                header("Location: dashboard.php");
+            } else {
+                header("Location: landing.php");
+            }
             exit;
         } else {
-
             $error_message = "Invalid username or password";
         }
     } else {
-
         $error_message = "Invalid username or password";
     }
 
-
-    $stmt->close();
+    mysqli_close($conn);
 } else {
-
     $error_message = "Invalid request method!";
 }
 
-// Include login page with error message
+
 include 'login.php';

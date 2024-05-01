@@ -1,85 +1,38 @@
 <?php
-session_start();
-// Check if a success message is set
-if (isset($_SESSION['success_message'])) {
-    // Display the success message
-    echo "<div class='success-message'>" . $_SESSION['success_message'] . "</div>";
-
-    // Unset the success message to prevent it from being displayed again
-    unset($_SESSION['success_message']);
-}
+include 'connection.php';
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
     <link rel="stylesheet" href="./css/dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+
+    </style>
 </head>
 
 <body>
-    <div class="dash--heading">
-        <div class="hotel--name">
-            <img src="./images/logo3.png" alt="img">
-        </div>
-        <div class="admin--profile">
-            <p>Welcome sweetpea.!</p>
-            <a href="g-setting.php" class="profile-picture"><img src="logo.png" alt="img"></a>
-        </div>
+    <!-- heading -->
+    <?php
+    include 'dashhead.php';
+    ?>
 
-    </div>
-
-    <!-- Dashboard Container -->
     <div class="dashboard">
         <!-- Sidebar Section -->
-        <div class="sidebar">
-            <!-- Main Navigation Links -->
-            <ul class="main">
-                <li><a href="dashboard.php">
-                        <div>Dashboard</div>
-                    </a></li>
-                <li><a href="guest.php">
-                        <div>Guests</div>
-                    </a></li>
-                <li class="dropdown">
-                    <div class="dropdown-btn">
-                        Booking Manage
-                        <i class="fas fa-chevron-right"></i>
-                    </div>
-                    <ul class="dropdown-content">
-                        <li><a href="booking_request.php">Booking Requests</a></li>
-                        <li><a href="all_bookings.php">All Bookings</a></li>
-                    </ul>
-                </li>
-                <li><a href="rooms.php">
-                        <div>Rooms</div>
-                    </a></li>
-                <li class="dropdown">
-                    <div class="dropdown-btn">
-                        Manage Hotel
-                        <i class="fas fa-chevron-right"></i>
-                    </div>
-                    <ul class="dropdown-content">
-                        <li><a href="hoteladd.php">Add Hotel</a></li>
-                        <li><a href="imagegallery.php">Image Gallery</a></li>
-                    </ul>
-                </li>
-                <li><a href="setting.php">
-                        <div>Settings</div>
-                    </a></li>
-            </ul>
-        </div>
-
+        <?php
+        include 'sidebar.php';
+        ?>
         <!-- Main Content Section -->
         <div class="second--section">
             <!-- Part Section -->
             <div class="part">
                 <h2>Hotel Description</h2>
-                <a href="roomtype.php"><button>Back to the list</button></a>
+                <a href="dashboard.php"><button>Back</button></a>
             </div>
 
             <!-- Part Two Section -->
@@ -105,9 +58,12 @@ if (isset($_SESSION['success_message'])) {
                             <input type="phone" name="hotelContact" required>
                         </div>
                     </div>
-                    <div class="description">
+                    <div>
                         <label for="description">Description</label>
-                        <textarea name="description" id="description" cols="121" rows="20"></textarea>
+                        <div>
+                            <textarea name="description" id="description" cols="121" rows="20"></textarea>
+                        </div>
+
                     </div>
                     <!-- Services Section -->
                     <div class="service">
@@ -118,29 +74,28 @@ if (isset($_SESSION['success_message'])) {
                         <button type="button" onclick="addServiceField()">Add Service</button>
                     </div>
 
+                    <!-- Rooms Section -->
+                    <div class="service">
+                        <label for="rooms">Rooms:</label>
+                        <div id="room-container">
+                            <!-- JavaScript will dynamically add input fields for room entries here -->
+                        </div>
+                        <button type="button" onclick="addRoomField()">Add Room</button>
+                    </div>
+
                     <!-- Images Section -->
                     <div class="divimages">
                         <label for="imageUpload">Featured Image:</label>
                         <input type="file" id="imageUpload" name="image" accept="image/*">
                     </div>
-                    <div class="image-preview" id="imagePreview"></div>
 
-                    <!-- Rooms Section -->
-                    <div class="dividend">
-                        <div class="service">
-                            <label for="rooms">Rooms:</label>
-                            <div id="room-container">
-                                <!-- JavaScript will dynamically add input fields for room entries here -->
-                            </div>
-                            <button type="button" onclick="addRoomField()">Add Room</button>
-                        </div>
-                    </div>
+                    <div class="image-preview" id="imagePreview"></div>
                     <div class="elements">
                         <label for="hotelContact">Ratings:</label><br>
                         <input type="number" name="ratings" required>
                     </div>
                     <hr>
-                    <div class="elements">
+                    <div class="submit">
                         <button type="submit">Save</button>
                     </div>
                 </form>
@@ -152,26 +107,15 @@ if (isset($_SESSION['success_message'])) {
     </div>
     <!-- Footer Section -->
     <div class="footer">
-        <!-- Add your footer content here -->
     </div>
 
     <!-- JavaScript Code Section -->
     <script>
-        // Add event listeners to dropdown buttons to toggle their visibility
-        document.querySelectorAll('.dropdown-btn').forEach(btn => {
-            btn.addEventListener('click', function () {
-                const parent = this.parentElement;
-                parent.classList.toggle('active');
-            });
-        });
-
         // Add event listeners to format textarea input as a bulleted list
         const textarea = document.getElementById('myTextarea');
 
         textarea.addEventListener('input', function (event) {
-            const lines = this.value.split('\n'); // Split textarea content into lines
-
-            // Loop through each line and format as a bulleted list item
+            const lines = this.value.split('\n');
             for (let i = 0; i < lines.length; i++) {
                 if (lines[i].trim() !== '' && lines[i].charAt(0) !== '•') {
                     lines[i] = '• ' + lines[i];

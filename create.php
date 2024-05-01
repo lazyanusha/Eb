@@ -32,16 +32,14 @@ include 'connection.php';
 //     availability BOOLEAN NOT NULL
 // )";
 
-// $sql = "CREATE TABLE reservations (
-//     reserve_id INT AUTO_INCREMENT PRIMARY KEY,
-//     guest_id int not null,
-//     hotel_id INT NOT NULL,
-//     guest_count int not null,
-//     room_number INT NOT NULL,
-//     room_type VARCHAR(255) NOT NULL,
-//     check_in datetime,
-//     check_out datetime,
-//     status boolean not null
+
+// $sql = "CREATE TABLE admins (
+//     user_id INT AUTO_INCREMENT PRIMARY KEY,
+//     fullname VARCHAR(255) NOT NULL,
+//     email VARCHAR(255) NOT NULL UNIQUE,
+//     password VARCHAR(255) NOT NULL,
+//     phone VARCHAR(20),
+//     images blob
 // )";
 
 // $sql = "CREATE TABLE users (
@@ -50,8 +48,7 @@ include 'connection.php';
 //     email VARCHAR(255) NOT NULL UNIQUE,
 //     password VARCHAR(255) NOT NULL,
 //     phone VARCHAR(20),
-//     images blob,
-//     role ENUM('user', 'admin', 'superadmin') NOT NULL DEFAULT 'user'
+//     images blob
 // )";
 
 // $sql = "CREATE TABLE hotel_images (
@@ -72,7 +69,6 @@ include 'connection.php';
 //     room_number VARCHAR(20) NOT NULL,
 //     room_type VARCHAR(50),
 //     bed_type VARCHAR(50), 
-//     special_requests TEXT,
 //     total_price DECIMAL(10,2) NOT NULL,
 //     payment_status ENUM('paid', 'pending', 'cancelled') NOT NULL DEFAULT 'pending',
 //     payment_method VARCHAR(50) NOT NULL,
@@ -92,5 +88,5 @@ include 'connection.php';
 
 
 
-// Close connection
+
 // mysqli_close($conn);
