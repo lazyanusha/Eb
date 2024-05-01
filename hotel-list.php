@@ -59,18 +59,30 @@ if (!isset($_POST['query'])) {
 </head>
 <style>
     button {
-      padding: 8px 10px !important;
-      cursor: pointer;
-      background: linear-gradient(to top, #7969c7, #2b3454);
-      color: #f9f9f9 !important;
-      border: none;
+        padding: 8px 10px !important;
+        cursor: pointer;
+        background: linear-gradient(to top, #7969c7, #2b3454);
+        color: #f9f9f9 !important;
+        border: none;
     }
+
     .button1 {
-      padding: 8px 10px !important;
-      cursor: pointer;
-      background: linear-gradient(to top, #7969c7, #f00);
-      border: none;
-      color: #f9f9f9 !important;
+        padding: 8px 10px !important;
+        cursor: pointer;
+        background: linear-gradient(to top, #7969c7, #f00);
+        border: none;
+        color: #f9f9f9 !important;
+    }
+
+    .action {
+        display: flex;
+        column-gap: 10px;
+        border: none;
+        justify-content: center;
+    }
+    input {
+      padding: 8px 20px;
+      border: 1px solid #7969c7;
     }
 </style>
 
@@ -94,11 +106,11 @@ if (!isset($_POST['query'])) {
                     <!-- <a href="dashboard.php"><button>Back</button></a> -->
                 </div>
                 <div class="search">
-                    <form action="#" method="post">
-                        <input type="text" name="query" id="search-bar" placeholder="Search for hotels" autocomplete="on">
-                        <button type="submit">Search</button>
-                    </form>
-                </div>
+          <form action="#" id="searchForm" onsubmit="return true;">
+            <input type="search" placeholder="search here" name="search" />
+            <button type="submit" onclick="searchTable()">search</button>
+          </form>
+        </div>
             </div>
             <div class="more--details">
 
@@ -141,12 +153,18 @@ if (!isset($_POST['query'])) {
                                 <!-- Display services data -->
                                 <td><?php echo implode(", ", $services); ?></td>
 
-                                <td>
-                                    <form action="reservation_update.php" method="post">
+                                <td class="action">
+                                    <form action="update.php" method="post">
                                         <input type="hidden" name="hotel_id" value="<?php echo $hotel['hotel_id']; ?>">
-                                        <button type="submit" name="submit" onclick="return confirm('Confirm Update?')">Update</button>
-                                        <button type="submit" name="delete" class="button1" onclick="return confirm('Confirm delete?')">Delete</button>
+                                        <button type="submit" name="update">Update</button>
                                     </form>
+                                    <form action="delete.php" method="post">
+                                        <input type="hidden" name="hotel_id" value="<?php echo $hotel['hotel_id']; ?>">
+                                        <button class="button1" type="submit" name="delete"
+                                            onclick="return confirm('Confirm delete?')">Delete</button>
+                                    </form>
+
+
                                 </td>
                             </tr>
                         <?php endforeach; ?>

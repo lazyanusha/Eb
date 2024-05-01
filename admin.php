@@ -99,10 +99,9 @@ if ($result) {
                   </form>
                   <form action="delete.php" method="post">
                     <input type="hidden" name="admin_id" value="<?php echo $admin['admin_id']; ?>">
-                    <button class="button1" type="submit" name="delete" onclick="return confirm('Confirm delete?')" >Delete</button>
+                    <button class="button1" type="submit" name="delete"
+                      onclick="return confirm('Confirm delete?')">Delete</button>
                   </form>
-
-
                 </td>
               </tr>
             <?php endforeach; ?>
