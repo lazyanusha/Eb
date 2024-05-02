@@ -1,8 +1,11 @@
 <?php
 
 include 'connection.php';
-$sql = "SELECT r.*, h.hotel_name, h.hotel_address, r.reservation_status FROM reservations r
-        INNER JOIN hotels h ON r.hotel_id = h.hotel_id ORDER BY reservation_id ASC";
+$sql = "SELECT r.*, h.hotel_name, h.hotel_address, r.reservation_status 
+FROM reservations r
+INNER JOIN hotels h ON r.hotel_id = h.hotel_id 
+ORDER BY CASE WHEN r.reservation_status = 'pending' THEN 0 ELSE 1 END, r.reservation_status ASC";
+
 
 
 $result = mysqli_query($conn, $sql);
@@ -31,17 +34,12 @@ while ($row = mysqli_fetch_assoc($result)) {
   <style>
     select {
       font-size: 16px;
-      padding: 9px 15px;
+      padding: 9px 13px;
       background-color: #f9f9f9;
       border: 1px solid #7969c7;
       border-radius: 5px;
       outline: none;
       cursor: pointer;
-    }
-
-    option {
-      padding: 30px;
-      height: 300px;
     }
 
     /* Style for selected option */
@@ -55,6 +53,7 @@ while ($row = mysqli_fetch_assoc($result)) {
       cursor: pointer;
       background: linear-gradient(to top, #7969c7, #2b3454);
       color: #f9f9f9 !important;
+      border: none;
     }
 
     input {
@@ -67,6 +66,11 @@ while ($row = mysqli_fetch_assoc($result)) {
       display: flex;
       flex-direction: column;
       row-gap: 20px;
+    }
+
+    form {
+      display: flex;
+      column-gap: 20px;
     }
   </style>
 </head>
@@ -117,7 +121,7 @@ while ($row = mysqli_fetch_assoc($result)) {
               <th>Check-in</th>
               <th>Check-out</th>
               <th>Room type</th>
-              <th>Room number</th>
+              <th>Room quantity</th>
 
             </tr>
           </thead>
@@ -140,39 +144,25 @@ while ($row = mysqli_fetch_assoc($result)) {
                 </td>
 
                 <td>
-                  <select id="status<?php echo $info['reservation_id']; ?>" name="status"
-                    onchange="changeBookingStatus(<?php echo $info['reservation_id']; ?>, this)">
-                    <?php
-                    // Define an array to hold unique reservation status values
-                    $statusOptions = array();
-
-                    foreach ($reservations as $info) {
-                      $status = $info['reservation_status'];
-                      // Check if the status value is not already in the array
-                      if (!in_array($status, $statusOptions)) {
-                        // Add the status value to the array
-                        $statusOptions[] = $status;
-                      }
-                    }
-
-                    // Generate the option tags for each status option
-                    foreach ($statusOptions as $option) {
-                      // Set the selected attribute based on the reservation status
-                      $selected = ($info['reservation_status'] == $option) ? 'selected' : '';
-                      echo "<option value='$option' $selected>" . ucfirst($option) . "</option>";
-                    }
-                    ?>
-                  </select>
-                </td>
-
-                <td>
-                  <form action="reservation_update.php" method="post">
+                  <form action="reservation_update.php" method="post"
+                    onsubmit="updateReservationStatus(this); return false;">
                     <input type="hidden" name="reservation_id" value="<?php echo $info['reservation_id']; ?>">
-                    <input type="hidden" name="reservation_status"
-                      id="reservation_status_<?php echo $info['reservation_id']; ?>"
-                      value="<?php echo $info['reservation_status']; ?>">
+                    <select name="reservation_status">
+                      <option value="Pending" <?php if ($info['reservation_status'] == "pending")
+                        echo 'selected'; ?>>
+                        Pending</option>
+                      <option value="Confirmed" <?php if ($info['reservation_status'] == "confirmed")
+                        echo 'selected'; ?>>
+                        Confirm</option>
+                      <option value="Cancelled" <?php if ($info['reservation_status'] == "cancelled")
+                        echo 'selected'; ?>>
+                        Cancel</option>
+
+                    </select>
                     <button type="submit" name="submit">Update</button>
                   </form>
+
+
                 </td>
 
               </tr>
@@ -210,16 +200,10 @@ while ($row = mysqli_fetch_assoc($result)) {
       }
     }
 
-    function changeBookingStatus(bookingId, status) {
-      var xhr = new XMLHttpRequest();
-      xhr.open("POST", "update_booking_status.php", true);
-      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-      xhr.onreadystatechange = function () {
-        if (this.readyState == 4 && this.status == 200) {
-          console.log(this.responseText);
-        }
-      };
-      xhr.send("reservation_id=" + bookingId + "&reservation_status=" + status);
+    function updateReservationStatus(form) {
+      var selectedOption = form.querySelector('select[name="reservation_status"]').value;
+      form.querySelector('input[name="reservation_status"]').value = selectedOption;
+      form.submit();
     }
 
   </script>

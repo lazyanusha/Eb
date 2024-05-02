@@ -32,8 +32,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     mysqli_stmt_bind_param($stmt, "issss", $userID, $fullname, $email, $hashedPassword, $phone);
 
     if (mysqli_stmt_execute($stmt)) {
-        echo "Registered successfully.";
-        header("Location: login.php");
+        echo "<script>alert('Register success. You will be redirected to login page.!!'); window.location='login.php';</script>";
+
         exit();
     } else {
         // Registration failed

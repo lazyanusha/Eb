@@ -16,13 +16,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $row = mysqli_fetch_assoc($result);
         $storedPassword = $row['password'];
 
-        if (($row['type'] === 'user' && password_verify($userLoginPassword, $storedPassword)) ||
-            ($row['type'] === 'admin' && $userLoginPassword === $storedPassword)) {
+        if (
+            ($row['type'] === 'user' && password_verify($userLoginPassword, $storedPassword)) ||
+            ($row['type'] === 'admin' && $userLoginPassword === $storedPassword)
+        ) {
             $_SESSION['email'] = $email;
             if ($row['type'] === 'admin') {
-                header("Location: dashboard.php");
+                echo "<script>alert('Logged in successful. Welcome!!'); window.location='dashboard.php';</script>";
+
             } else {
-                header("Location: landing.php");
+                echo "<script>alert('Logged in successful. Welcome!!'); window.location='landing.php';</script>";
+
             }
             exit;
         } else {

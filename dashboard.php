@@ -1,25 +1,36 @@
 <?php
 include 'connection.php';
 // Fetch room details from the database
-$sql = "SELECT COUNT(*) AS total_rooms FROM rooms";
+$sql = "SELECT count(room_number) AS total_rooms FROM rooms";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $total_rooms = $row['total_rooms'];
 
-$sql = "SELECT COUNT(*) AS available_rooms FROM rooms WHERE availability = 'available'";
-$result = mysqli_query($conn, $sql);
-$row = mysqli_fetch_assoc($result);
-$available_rooms = $row['available_rooms'];
-
-$sql = "SELECT COUNT(*) AS inquired_rooms FROM rooms WHERE availability = 'inquired'";
+$sql = "SELECT COUNT(*) AS inquired_rooms FROM reservations WHERE reservation_status = 'pending'";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $inquired_rooms = $row['inquired_rooms'];
 
-$sql = "SELECT COUNT(*) AS cancelled_rooms FROM rooms WHERE availability = 'cancelled'";
+$sql = "SELECT count(room_number) AS booked_rooms FROM rooms WHERE availability = 'booked'";
+$result = mysqli_query($conn, $sql);
+$row = mysqli_fetch_assoc($result);
+$booked_rooms = $row['booked_rooms'];
+
+
+$sql = "SELECT count(room_number) AS available_rooms FROM rooms WHERE availability = 'available'";
+$result = mysqli_query($conn, $sql);
+$row = mysqli_fetch_assoc($result);
+$available_rooms = $row['available_rooms'];
+
+$sql = "SELECT COUNT(*) AS cancelled_rooms FROM reservations WHERE reservation_status = 'cancelled'";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $cancelled_rooms = $row['cancelled_rooms'];
+
+$sql = "SELECT COUNT(hotel_id) AS total_hotels FROM hotels";
+$result = mysqli_query($conn, $sql);
+$row = mysqli_fetch_assoc($result);
+$total_hotels = $row['total_hotels'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -44,36 +55,48 @@ $cancelled_rooms = $row['cancelled_rooms'];
     <?php
     include 'sidebar.php';
     ?>
-    
+
     <div class="second--section">
       <div class="card--container">
-        <div class="card color1">
-          <div class="card--content">
-            <h2 class="card--title">Total Rooms</h2>
-            <p class="card--details"><?php echo $total_rooms; ?></p>
-          </div>
+
+        <div class="card--content">
+          <h2 class="card--title">Total Rooms</h2>
+          <p class="card--details"><?php echo $total_rooms; ?></p>
         </div>
 
-        <div class="card color2">
-          <div class="card--content">
-            <h2 class="card--title">Available Rooms</h2>
-            <p class="card--details"><?php echo $available_rooms; ?></p>
-          </div>
+
+        <div class="card--content">
+          <h2 class="card--title">Available Rooms</h2>
+          <p class="card--details"><?php echo $available_rooms; ?></p>
+
         </div>
-        <div class="card color3">
+        <a href="bookingmanage.php">
+
           <div class="card--content">
             <h2 class="card--title">Inquired Rooms</h2>
             <p class="card--details"><?php echo $inquired_rooms; ?></p>
           </div>
+
+        </a>
+
+        <div class="card--content">
+          <h2 class="card--title">Booked Rooms</h2>
+          <p class="card--details"><?php echo $booked_rooms; ?></p>
         </div>
-        <div class="card color4">
+
+        <div class="card--content">
+          <h2 class="card--title">Cancelled Rooms</h2>
+          <p class="card--details"><?php echo $cancelled_rooms; ?></p>
+        </div>
+        <a href="hotel-list.php">
           <div class="card--content">
-            <h2 class="card--title">Cancelled Rooms</h2>
-            <p class="card--details"><?php echo $cancelled_rooms; ?></p>
+            <h2 class="card--title">Total Hotels</h2>
+            <p class="card--details"><?php echo $total_hotels; ?></p>
           </div>
-        </div>
+        </a>
       </div>
     </div>
+  </div>
   </div>
   <div class="footer"></div>
 </body>

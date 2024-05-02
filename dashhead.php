@@ -3,9 +3,12 @@ session_start();
 include 'connection.php';
 if (!isset($_SESSION['email'])) {
     header("Location: login.php");
-    exit(); 
+    exit();
 }
 
+$loggedInEmail = $_SESSION['email'];
+$sql = "SELECT email FROM admins WHERE email = '$loggedInEmail'";
+$result = mysqli_query($conn, $sql);
 function generateProfilePicture($fullname)
 {
     $names = explode(" ", $fullname);
@@ -13,52 +16,60 @@ function generateProfilePicture($fullname)
     $lastInitial = isset($names[1]) ? strtoupper(substr($names[1], 0, 1)) : '';
     return $firstInitial . $lastInitial;
 }
-?>
+if (mysqli_num_rows($result) === 1) {
 
-<!DOCTYPE html>
-<html lang="en">
+    ?>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
-    <link rel="stylesheet" href="./css/dashboard.css">
-</head>
+    <!DOCTYPE html>
+    <html lang="en">
 
-<body>
-    <div class="dash--heading">
-        <div class="hotel--name">
-           <a href="dashboard.php"> <img src="./images/logo3.png" alt="img"></a>
-        </div>
-        <div class="admin--profile">
-            <?php
-            if (isset($_SESSION['email'])) {
-                $email = $_SESSION['email'];
-                $sql = "SELECT email, fullname FROM admins WHERE email = '$email'";
-                $result = mysqli_query($conn, $sql);
-                if (mysqli_num_rows($result) === 1) {
-                    $row = mysqli_fetch_assoc($result);
-                    $adminEmail = $row["email"];
-                    $adminFullname = $row["fullname"];
-                    echo '<p>' . $adminEmail . '</p>';
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Dashboard</title>
+        <link rel="stylesheet" href="./css/dashboard.css">
+    </head>
 
-                    // Check if profile image exists, otherwise display initials
-                    $profileImagePath = 'profile_images/' . generateProfilePicture($adminFullname) . '.png';
-                    if (file_exists($profileImagePath)) {
-                        echo '<img src="' . $profileImagePath . '" alt="Profile Picture">';
+    <body>
+        <div class="dash--heading">
+            <div class="hotel--name">
+                <a href="dashboard.php"> <img src="./images/logo3.png" alt="img"></a>
+            </div>
+            <div class="admin--profile">
+                <?php
+                if (isset($_SESSION['email'])) {
+                    $email = $_SESSION['email'];
+                    $sql = "SELECT email, fullname, images FROM admins WHERE email = '$email'";
+                    $result = mysqli_query($conn, $sql);
+
+                    if (mysqli_num_rows($result) === 1) {
+                        $row = mysqli_fetch_assoc($result);
+                        $adminEmail = $row["email"];
+                        $adminFullname = $row["fullname"];
+                        $profileImagePath = $row["images"];
+
+                        echo '<p>' . $adminEmail . '</p>';
+
+                        if (!empty($profileImagePath) && file_exists($profileImagePath)) {
+                            echo '<img src="' . $profileImagePath . '" alt="Profile Picture">';
+                        } else {
+                            echo '<div class="default-profile-image">' . generateProfilePicture($adminFullname) . '</div>';
+                        }
                     } else {
-                        echo '<div class="default-profile-image">' . generateProfilePicture($adminFullname) . '</div>';
+                        echo "Admin details not found.";
                     }
                 } else {
-                    echo "Admin details not found.";
+                    echo "Admin email not found in session.";
                 }
-            } else {
-                echo "Admin email not found in session.";
-            }
-            ?>
+                ?>
+            </div>
         </div>
+    </body>
 
-    </div>
-</body>
-
-</html>
+    </html>
+    <?php
+} else {
+    header("Location: landing.php");
+    exit();
+}
+?>

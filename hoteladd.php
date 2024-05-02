@@ -83,6 +83,7 @@ include 'connection.php';
                         <button type="button" onclick="addRoomField()">Add Room</button>
                     </div>
 
+
                     <!-- Images Section -->
                     <div class="divimages">
                         <label for="imageUpload">Featured Image:</label>
@@ -179,30 +180,53 @@ include 'connection.php';
             var roomField = `
         <div class="room-field">
             <label for="room-type">Room Type:</label>
-            <select class="reservation--info" name="room-type[]" id="room-type">
-            <option value="" disabled selected>Select type of room</option>
-            <option value="normal">Normal Room</option>
-            <option value="luxury">Luxury Room</option>
-            <option value="deluxe">Deluxe Room</option>
-            <option value="king">King Size</option>
-          </select>
-            <label for="room-quantity">Quantity:</label>
-            <input type="number" name="room-quantity[]" value="0" min="0">
+            <select class="reservation--info room-type-select" name="room-type[]">
+                <option value="" disabled selected>Select type of room</option>
+                <option value="normal">Normal Room</option>
+                <option value="luxury">Luxury Room</option>
+                <option value="deluxe">Deluxe Room</option>
+                <option value="king">King Size</option>
+            </select>
             <label for="price">Price per Room:</label>
             <input type="number" name="price[]" value="0" min="0">
+            <input type="number" name="room-quantity[]" id="room-quantity" min="1">
+            <button type="button" onclick="addRoomNumbers(this)">Add Room Numbers</button>
             <button type="button" onclick="removeRoomField(this)">Remove</button>
         </div>
     `;
+
             var container = document.getElementById('room-container');
             var div = document.createElement('div');
             div.innerHTML = roomField.trim();
             container.appendChild(div.firstChild);
         }
 
-        // Function to remove room field
+        function addRoomNumbers(button) {
+            var roomField = button.parentElement;
+            var roomTypeSelect = roomField.querySelector('.room-type-select');
+            var quantity = roomField.querySelector('[name="room-quantity[]"]').value;
+
+            var roomNumbersContainer = document.createElement('div');
+            roomNumbersContainer.classList.add('room-numbers-container');
+
+            for (var i = 1; i <= quantity; i++) {
+                var roomNumberInput = document.createElement('input');
+                roomNumberInput.type = 'text';
+                roomNumberInput.name = 'room_numbers[' + roomTypeSelect.value + '][]'; // Group by room type
+                roomNumberInput.placeholder = 'Room Number ' + i;
+                roomNumberInput.required = true;
+
+                roomNumbersContainer.appendChild(roomNumberInput);
+            }
+
+            roomField.appendChild(roomNumbersContainer); // Append to the parent room field div
+        }
+
+
         function removeRoomField(element) {
             element.parentNode.remove();
         }
+
 
         // Function to preview selected image
         const imageUpload = document.getElementById('imageUpload');

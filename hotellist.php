@@ -75,10 +75,10 @@ if (isset($_POST['query'])) {
                                 ?>
                             </div>
                             <?php if (isset($_SESSION['email'])): ?>
-                                <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>" class="submit">Make
+                                <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>" class="button">Make
                                     Reservation</a>
                             <?php else: ?>
-                                <a href="login.php" class="submit">Login to Book</a>
+                                <a href="login.php" class="button">Login to Book</a>
                             <?php endif; ?>
                         </div>
                     </a>

@@ -1,20 +1,30 @@
 <?php
-session_start();
 include 'connection.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
-    $reservation_id = $_POST['reservation_id'];
-    $reservation_status = $_POST['reservation_status'];
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Retrieve POST data
+    $reservation_id = $_POST["reservation_id"];
+    $reservation_status = $_POST["reservation_status"];
 
-    $sql = "UPDATE reservations SET reservation_status = '$reservation_status' WHERE reservation_id = $reservation_id";
-    $result = mysqli_query($conn, $sql);
-    if ($result) {
-        echo "Changes saved successfully.";
-        // Redirect to a page to display updated vehicle details
-        header("Location: bookingmanage.php");
+    $update_sql = "UPDATE reservations SET reservation_status = '$reservation_status' WHERE reservation_id = '$reservation_id'";
+    $update_result = mysqli_query($conn, $update_sql);
 
+    if ($update_result) {
+        echo "<script>alert('Entry updated successfully!'); window.location='bookingmanage.php';</script>";
 
+        exit;
     } else {
-        echo "Error: " . mysqli_error($conn);
+        echo "Error updating reservation: " . mysqli_error($conn);
+    }
+
+
+    $update_sql = "UPDATE rooms SET availability = '$reservation_status' WHERE reservation_id = '$reservation_id'";
+    $update_result = mysqli_query($conn, $update_sql);
+
+    if ($update_result) {
+        var_dump($_POST);
+        exit;
+    } else {
+        echo "Error updating reservation: " . mysqli_error($conn);
     }
 }

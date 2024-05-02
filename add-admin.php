@@ -13,9 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $target_dir = "uploads/";
         $target_file = $target_dir . basename($_FILES["image"]["name"]);
 
-        // Move uploaded file to the target directory
         if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
-            // Insert data into the database
             $sql = "INSERT INTO admins (fullname, email, phone, password, images) VALUES (?, ?, ?, ?, ?)";
             $stmt = mysqli_prepare($conn, $sql);
             mysqli_stmt_bind_param($stmt, "sssss", $fullname, $email, $phone, $password, $target_file);
@@ -46,7 +44,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admins </title>
     <link rel="stylesheet" href="./css/dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
         input[type='submit'],
         button {
@@ -104,7 +101,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </div>
 
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post"
-                enctype="multipart/form-data">
+                onsubmit="return validateForm()" enctype="multipart/form-data">
 
                 <div class="container">
                     <div class="elements">
@@ -119,14 +116,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
                     <div class="elements">
                         <label for="phone">Phone Number:</label>
-                        <input type="tel" id="phone" name="phone" />
+                        <input type="tel" id="phone" name="phone" oninput="formatPhoneNumber(this)" maxlength="10"
+                            pattern="[0-9]{10}" required />
+
                     </div>
 
                     <div class="elements">
                         <label for="password">Password:</label>
                         <input type="password" id="password" name="password1" required />
+                        <div id="passwordFeedback"></div>
                     </div>
-
 
                     <div class="elements">
                         <label for="password">Confirm password:</label>
@@ -144,6 +143,49 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
         <div class="footer"></div>
+        <script>
+            function validateForm() {
+                var password = document.getElementById("password").value;
+                var confirmPassword = document.getElementById("password2").value;
+
+                if (password !== confirmPassword) {
+                    alert("Passwords do not match");
+                    return false;
+                }
+                var strength = 0;
+                if (password.length >= 8) strength += 1;
+                if (password.match(/[a-z]+/)) strength += 1;
+                if (password.match(/[A-Z]+/)) strength += 1;
+                if (password.match(/[0-9]+/)) strength += 1;
+                if (password.match(/[\W_]+/)) strength += 1;
+
+                var feedback = "";
+                switch (strength) {
+                    case 0:
+                    case 1:
+                    case 2:
+                        feedback = "Weak";
+                        break;
+                    case 3:
+                    case 4:
+                        feedback = "Moderate";
+                        break;
+                    case 5:
+                        feedback = "Strong";
+                        break;
+                }
+                document.getElementById("passwordFeedback").innerText = "Password Strength: " + feedback;
+                return strength >= 3;
+            }
+            function formatPhoneNumber(input) {
+                var phoneNumber = input.value.replace(/\D/g, '');
+                if (phoneNumber.length > 10) {
+                    phoneNumber = phoneNumber.slice(0, 10);
+                }
+                var formattedPhoneNumber = phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, '$1$2$3');
+                input.value = formattedPhoneNumber;
+            }
+        </script>
 </body>
 
 </html>

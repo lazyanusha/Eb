@@ -21,27 +21,13 @@ if ($result) {
   <link rel="stylesheet" href="./css/dashboard.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
   <style>
-    .action {
-      display: flex;
-      column-gap: 10px;
-      border: none;
-      justify-content: center;
-    }
-
+   
     button {
       padding: 8px 15px !important;
       cursor: pointer;
       background: linear-gradient(to top, #7969c7, #2b3454);
       color: #f9f9f9 !important;
       border: none;
-    }
-
-    .button1 {
-      padding: 8px 15px !important;
-      cursor: pointer;
-      background: linear-gradient(to top, #7969c7, #f00);
-      border: none;
-      color: #f9f9f9 !important;
     }
 
     img {
@@ -80,7 +66,6 @@ if ($result) {
               <th>Email</th>
               <th>Contact</th>
               <th>Photo</th>
-              <th>Action</th>
             </tr>
           </thead>
           <tbody>
@@ -90,18 +75,7 @@ if ($result) {
                 <td><?php echo $admin['fullname']; ?></td>
                 <td><?php echo $admin['email']; ?></td>
                 <td><?php echo $admin['phone']; ?></td>
-                <td><img src="<?php echo $admin['images']; ?>" alt="Admin Image">
-                </td>
-                <td class="action">
-                  <form action="update.php" method="post">
-                    <input type="hidden" name="admin_id" value="<?php echo $admin['admin_id']; ?>">
-                    <button type="submit" name="update">Update</button>
-                  </form>
-                  <form action="delete.php" method="post">
-                    <input type="hidden" name="admin_id" value="<?php echo $admin['admin_id']; ?>">
-                    <button class="button1" type="submit" name="delete"
-                      onclick="return confirm('Confirm delete?')">Delete</button>
-                  </form>
+                <td><img src="<?php echo $admin['images']; ?>" alt="Image">
                 </td>
               </tr>
             <?php endforeach; ?>

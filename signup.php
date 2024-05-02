@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Hotel Reservation System - Sign Up</title>
   <link rel="stylesheet" href="./css/log.css">
 </head>
-
 <body>
   <div class="container">
     <form class="form--2" action="signupvalidate.php" method="post" onsubmit="return validateForm()">
@@ -20,7 +18,7 @@
         <input type="email" id="email" name="email" required />
 
         <label for="phone">Phone Number:</label>
-        <input type="tel" id="phone" name="phone" />
+        <input type="tel" id="phone" name="phone" oninput="formatPhoneNumber(this)" maxlength="10" pattern="[0-9]{10}" required />
 
         <label for="password">Password:</label>
         <input type="password" id="password" name="password1" required />
@@ -45,19 +43,17 @@
       var password = document.getElementById("password").value;
       var confirmPassword = document.getElementById("password2").value;
 
-      // Check if passwords match
       if (password !== confirmPassword) {
         alert("Passwords do not match");
         return false;
       }
 
-      // Check password strength
       var strength = 0;
-      if (password.length >= 8) strength += 1; // Minimum 8 characters
-      if (password.match(/[a-z]+/)) strength += 1; // Contains lowercase
-      if (password.match(/[A-Z]+/)) strength += 1; // Contains uppercase
-      if (password.match(/[0-9]+/)) strength += 1; // Contains numbers
-      if (password.match(/[\W_]+/)) strength += 1; // Contains special characters
+      if (password.length >= 8) strength += 1;
+      if (password.match(/[a-z]+/)) strength += 1;
+      if (password.match(/[A-Z]+/)) strength += 1;
+      if (password.match(/[0-9]+/)) strength += 1;
+      if (password.match(/[\W_]+/)) strength += 1;
 
       var feedback = "";
       switch (strength) {
@@ -76,10 +72,17 @@
       }
       document.getElementById("passwordFeedback").innerText = "Password Strength: " + feedback;
 
-      // Returning false prevents form submission if password is weak
-      return strength >= 3; // Adjust as needed
+      return strength >= 3;
+    }
+
+    function formatPhoneNumber(input) {
+      var phoneNumber = input.value.replace(/\D/g, '');
+      if (phoneNumber.length > 10) {
+        phoneNumber = phoneNumber.slice(0, 10);
+      }
+      var formattedPhoneNumber = phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, '$1$2$3');
+      input.value = formattedPhoneNumber;
     }
   </script>
 </body>
-
 </html>

@@ -65,6 +65,7 @@ a:hover {
   border-radius: 50%;
 }
 
+
 .admin--profile img {
   width: 50px;
   height: 50px;
@@ -121,43 +122,39 @@ a:hover {
 .card--container {
   margin: 20px;
   display: flex;
-  justify-content: space-around;
-  text-align: center;
-  padding: 20px;
+  column-gap: 50px;
+  padding: 20px 80px; 
   cursor: pointer;
+  flex-wrap: wrap;
+  row-gap: 40px;
+  
 }
-.card {
-  width: 250px;
-  height: 150px;
-  padding: 40px 20px 20px 20px;
+.card--content{
+  background: linear-gradient(to top, #7969c7, #2b3454);
+  color: #f9f9f9;
+  height: 180px;
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  row-gap: 20px;
+  border: 1px solid #8d69c0;
   border-radius: 10px;
-  color: white;
 }
 
-.card h2 {
-  font-size: 27px;
+.card--content:hover{
+  background: linear-gradient(to top, #a18bd3, #415180);
 }
-.card p {
+
+.card--content p{
   font-size: 30px;
-  padding-top: 20px;
   font-weight: 600;
-}
-
-.color1 {
-  background-color: rgb(163, 15, 255);
-}
-.color2 {
-  background-color: green;
-}
-.color3 {
-  background-color: skyblue;
-}
-.color4 {
-  background-color: red;
 }
 .more--details {
   margin: 20px;
   text-align: center;
+ 
 }
 
 table caption {
@@ -171,7 +168,7 @@ td {
   padding: 6px;
 }
 .footer {
-  background-color: rgb(88, 157, 236);
+  background-color: #2b3454;
   height: 40px;
   flex-shrink: 0;
 }
@@ -190,6 +187,7 @@ td {
   cursor: pointer;
   background: linear-gradient(to top, #7969c7, #2b3454);
   color: #f9f9f9;
+  border: none;
 }
 
 .part--two {
@@ -213,6 +211,7 @@ td {
 
 .elements button {
   padding: 15px 45px;
+  border: none;
 }
 .elements,
 .service {

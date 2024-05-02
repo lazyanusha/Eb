@@ -28,9 +28,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (mysqli_stmt_execute($stmt_reservation)) {
             $reservation_id = mysqli_insert_id($conn);
             $_SESSION['reservation_id'] = $reservation_id;
-            $_SESSION['success_message'] = "Your form has been submitted! You will be notified soon!!";
-            header("Location: landing.php?success_message=");
-            exit; 
+            echo "<script>alert('Your form has been submitted! You will be notified soon!!'); window.location='landing.php';</script>";
+            exit;
         } else {
             error_log("Error adding reservation: " . mysqli_error($conn));
             echo "An error occurred while processing your reservation. Please try again later.";

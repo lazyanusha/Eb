@@ -4,13 +4,6 @@ $backgroundImagePath = "./images/hotel.png";
 include 'connection.php';
 include 'nav.php';
 
-
-if (isset($_SESSION['success_message'])) {
-  echo "<script>alert('" . $_SESSION['success_message'] . "');</script>";
-  unset($_SESSION['success_message']);
-}
-
-// Retrieve hotel information from the database
 $sql = "SELECT hotel_id, hotel_name, hotel_contact, hotel_address, photos, ratings FROM hotels"; // Adjust the query to fetch the required fields
 $result = mysqli_query($conn, $sql);
 $hotels = [];
@@ -19,7 +12,6 @@ while ($row_hotel = mysqli_fetch_assoc($result)) {
 }
 $userCity = isset($_GET['location']) ? $_GET['location'] : "Thamel";
 
-// Adjust SQL query to select hotels based on their city or region
 $sql = "SELECT hotel_id, hotel_name, hotel_contact, hotel_address, photos, ratings FROM hotels WHERE hotel_address LIKE '%$userCity%'";
 $result = mysqli_query($conn, $sql);
 $nearbyHotels = [];
@@ -79,9 +71,9 @@ while ($row_hotel = mysqli_fetch_assoc($result)) {
                   ?>
                 </div>
                 <?php if (isset($_SESSION['email'])): ?>
-                  <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>" class="submit">Make Reservation</a>
+                  <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>" class="button">Make Reservation</a>
                 <?php else: ?>
-                  <a href="login.php" class="submit">Login to Book</a>
+                  <a href="login.php" class="button">Login to Book</a>
                 <?php endif; ?>
                 <br />
               </div>
@@ -124,9 +116,9 @@ while ($row_hotel = mysqli_fetch_assoc($result)) {
                 ?>
               </div>
               <?php if (isset($_SESSION['email'])): ?>
-                <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>" class="submit">Make Reservation</a>
+                <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>" class="button">Make Reservation</a>
               <?php else: ?>
-                <a href="login.php" class="submit">Login to Book</a>
+                <a href="login.php" class="button">Login to Book</a>
               <?php endif; ?>
               <br />
             </div>
@@ -163,9 +155,9 @@ while ($row_hotel = mysqli_fetch_assoc($result)) {
                     ?>
                   </div>
                   <?php if (isset($_SESSION['email'])): ?>
-                    <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>" class="submit">Make Reservation</a>
+                    <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>" class="button">Make Reservation</a>
                   <?php else: ?>
-                    <a href="login.php" class="submit">Login to Book</a>
+                    <a href="login.php" class="button">Login to Book</a>
                   <?php endif; ?>
                   <br />
                 </div>
