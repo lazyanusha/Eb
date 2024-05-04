@@ -54,8 +54,9 @@ include 'connection.php';
                             <input type="email" name="hotelEmail" required>
                         </div>
                         <div class="elements">
-                            <label for="hotelContact">Hotel Contact</label><br>
-                            <input type="phone" name="hotelContact" required>
+                            <label for="hotelContact">Hotel Contact:</label><br>
+                            <input type="tel" id="hotelContact" name="hotelContact" oninput="formatPhoneNumber(this)"
+                                maxlength="10" pattern="[0-9]{10}" required />
                         </div>
                     </div>
                     <div>
@@ -232,6 +233,15 @@ include 'connection.php';
                 }
             }
         });
+
+        function formatPhoneNumber(input) {
+            var phoneNumber = input.value.replace(/\D/g, '');
+            if (phoneNumber.length > 10) {
+                phoneNumber = phoneNumber.slice(0, 10);
+            }
+            var formattedPhoneNumber = phoneNumber.replace(/(\d{3})(\d{3})(\d{4})/, '$1$2$3');
+            input.value = formattedPhoneNumber;
+        }
 
     </script>
 </body>

@@ -1,7 +1,5 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+session_start();
 include 'connection.php';
 if (!isset($_SESSION['email'])) {
     header("Location: login.php");
@@ -74,3 +72,4 @@ if (mysqli_num_rows($result) === 1) {
     header("Location: landing.php");
     exit();
 }
+?>

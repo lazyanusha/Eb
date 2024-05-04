@@ -11,16 +11,10 @@ $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $inquired_rooms = $row['inquired_rooms'];
 
-$sql = "SELECT count(quantity) AS booked_rooms FROM rooms WHERE availability = 'booked'";
+$sql = "SELECT count(*) AS booked_rooms FROM reservations WHERE reservation_status = 'confirmed'";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $booked_rooms = $row['booked_rooms'];
-
-
-$sql = "SELECT count(quantity) AS available_rooms FROM rooms WHERE availability = 'available'";
-$result = mysqli_query($conn, $sql);
-$row = mysqli_fetch_assoc($result);
-$available_rooms = $row['available_rooms'];
 
 $sql = "SELECT COUNT(*) AS cancelled_rooms FROM reservations WHERE reservation_status = 'cancelled'";
 $result = mysqli_query($conn, $sql);
@@ -31,6 +25,9 @@ $sql = "SELECT COUNT(hotel_id) AS total_hotels FROM hotels";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $total_hotels = $row['total_hotels'];
+
+$available_rooms = $total_rooms - $booked_rooms - $cancelled_rooms;
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

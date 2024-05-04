@@ -48,7 +48,10 @@ if (isset($_POST['query'])) {
 <body>
     <div class="container1">
         <div class="search-container">
-            <h2 style="text-decoration: underline;">Hotels list !!</h2>
+            <div class="info">
+                <h2 class="heading">Hotels list</h2>
+                <a href="landing.php" class="button">Back</a>
+            </div>
             <form action="hotellist.php" method="post">
                 <input type="text" name="query" id="search-bar" placeholder="Search for hotels" autocomplete="on">
                 <button type="submit">Search</button>

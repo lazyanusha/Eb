@@ -16,15 +16,4 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     } else {
         echo "Error updating reservation: " . mysqli_error($conn);
     }
-
-
-    $update_sql = "UPDATE rooms SET availability = '$reservation_status' WHERE reservation_id = '$reservation_id'";
-    $update_result = mysqli_query($conn, $update_sql);
-
-    if ($update_result) {
-        var_dump($_POST);
-        exit;
-    } else {
-        echo "Error updating reservation: " . mysqli_error($conn);
-    }
 }

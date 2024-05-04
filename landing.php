@@ -46,9 +46,17 @@ while ($row_hotel = mysqli_fetch_assoc($result)) {
   </div>
   <div class="container">
     <div class="second_section">
-      <h2 class="heading">Hotels list</h2>
+      <div class="info">
+        <h2 class="heading">Hotels list</h2>
+        <a href="hotellist.php" class="button">See More</a>
+      </div>
       <div class="card--container">
-        <?php foreach ($hotels as $hotel): ?>
+        <?php
+        $count = 0;
+        foreach ($hotels as $hotel):
+          if ($count >= 8)
+            break;
+          ?>
           <div class="card">
             <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>">
               <img src="uploads/<?php echo $hotel['photos']; ?>" alt="<?php echo $hotel['hotel_name']; ?>" />
@@ -79,95 +87,121 @@ while ($row_hotel = mysqli_fetch_assoc($result)) {
               </div>
             </a>
           </div>
-        <?php endforeach; ?>
+          <?php
+          $count++;
+        endforeach;
+        ?>
       </div>
     </div>
-
+  </div>
+  <div class="info">
     <h2 class="heading">Hotels near
       <?php echo $userCity; ?>
     </h2>
-    <!-- Allow users to input their location -->
-    <form action="" method="GET">
-      <input type="text" id="location" name="location" placeholder="Enter city or region">
-      <button type="submit"><i class="fas fa-search"></i></button>
-    </form>
+    <a href="hotellist.php" class="button">See More</a>
+  </div>
 
-    <div class="card--container">
-      <?php foreach ($nearbyHotels as $hotel): ?>
-        <div class="card">
-          <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>">
-            <img src="uploads/<?php echo $hotel['photos']; ?>" alt="<?php echo $hotel['hotel_name']; ?>" />
-            <div class="card--content">
-              <h2 class="card--title">
-                <?php echo $hotel['hotel_name']; ?>
-              </h2>
-              <p class="card--details">
-                <?php echo $hotel['hotel_contact']; ?>
-              </p>
-              <p class="card--details">
-                <?php echo $hotel['hotel_address']; ?>
-              </p>
-              <div class="stars">
-                <?php
-                $ratings = $hotel['ratings'];
-                for ($i = 0; $i < $ratings; $i++) {
-                  echo '<i class="fas fa-star"></i>';
-                }
-                ?>
-              </div>
-              <?php if (isset($_SESSION['email'])): ?>
-                <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>" class="button">Make Reservation</a>
-              <?php else: ?>
-                <a href="login.php" class="button">Login to Book</a>
-              <?php endif; ?>
-              <br />
+
+  <!-- Allow users to input their location -->
+  <form action="" method="GET">
+    <input type="text" id="location" name="location" placeholder="Enter city or region">
+    <button type="submit"><i class="fas fa-search"></i></button>
+  </form>
+
+  <div class="card--container">
+    <?php $count = 0; // Initialize counter variable
+    foreach ($nearbyHotels as $hotel):
+      if ($count >= 8)
+        break; // Exit loop if count reaches 2
+      ?>
+      <div class="card">
+        <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>">
+          <img src="uploads/<?php echo $hotel['photos']; ?>" alt="<?php echo $hotel['hotel_name']; ?>" />
+          <div class="card--content">
+            <h2 class="card--title">
+              <?php echo $hotel['hotel_name']; ?>
+            </h2>
+            <p class="card--details">
+              <?php echo $hotel['hotel_contact']; ?>
+            </p>
+            <p class="card--details">
+              <?php echo $hotel['hotel_address']; ?>
+            </p>
+            <div class="stars">
+              <?php
+              $ratings = $hotel['ratings'];
+              for ($i = 0; $i < $ratings; $i++) {
+                echo '<i class="fas fa-star"></i>';
+              }
+              ?>
             </div>
+            <?php if (isset($_SESSION['email'])): ?>
+              <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>" class="button">Make Reservation</a>
+            <?php else: ?>
+              <a href="login.php" class="button">Login to Book</a>
+            <?php endif; ?>
+            <br />
+          </div>
 
-          </a>
-        </div>
-      <?php endforeach; ?>
-    </div>
-
-    <div class="second_section">
-      <h2 class="heading">Most popular Hotels!!</h2>
-      <div class="card--container">
-        <?php foreach ($hotels as $hotel): ?>
-          <?php if ($hotel['ratings'] >= 4): ?>
-            <div class="card">
-              <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>">
-                <img src="uploads/<?php echo $hotel['photos']; ?>" alt="<?php echo $hotel['hotel_name']; ?>" />
-                <div class="card--content">
-                  <h2 class="card--title">
-                    <?php echo $hotel['hotel_name']; ?>
-                  </h2>
-                  <p class="card--details">
-                    <?php echo $hotel['hotel_contact']; ?>
-                  </p>
-                  <p class="card--details">
-                    <?php echo $hotel['hotel_address']; ?>
-                  </p>
-                  <div class="stars">
-                    <?php
-                    $ratings = $hotel['ratings'];
-                    for ($i = 0; $i < $ratings; $i++) {
-                      echo '<i class="fas fa-star"></i>';
-                    }
-                    ?>
-                  </div>
-                  <?php if (isset($_SESSION['email'])): ?>
-                    <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>" class="button">Make Reservation</a>
-                  <?php else: ?>
-                    <a href="login.php" class="button">Login to Book</a>
-                  <?php endif; ?>
-                  <br />
-                </div>
-
-              </a>
-            </div>
-          <?php endif; ?>
-        <?php endforeach; ?>
+        </a>
       </div>
+      <?php
+      $count++;
+    endforeach;
+    ?>
+  </div>
+
+  <div class="second_section">
+    <div class="info">
+      <h2 class="heading">Most popular Hotels!!</h2>
+      <a href="hotellist.php" class="button">See More</a>
     </div>
+    <div class="card--container">
+      <?php
+      $count = 0;
+      foreach ($hotels as $hotel):
+        if ($count >= 8)
+          break;
+        ?>
+        <?php if ($hotel['ratings'] >= 4): ?>
+          <div class="card">
+            <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>">
+              <img src="uploads/<?php echo $hotel['photos']; ?>" alt="<?php echo $hotel['hotel_name']; ?>" />
+              <div class="card--content">
+                <h2 class="card--title">
+                  <?php echo $hotel['hotel_name']; ?>
+                </h2>
+                <p class="card--details">
+                  <?php echo $hotel['hotel_contact']; ?>
+                </p>
+                <p class="card--details">
+                  <?php echo $hotel['hotel_address']; ?>
+                </p>
+                <div class="stars">
+                  <?php
+                  $ratings = $hotel['ratings'];
+                  for ($i = 0; $i < $ratings; $i++) {
+                    echo '<i class="fas fa-star"></i>';
+                  }
+                  ?>
+                </div>
+                <?php if (isset($_SESSION['email'])): ?>
+                  <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>" class="button">Make Reservation</a>
+                <?php else: ?>
+                  <a href="login.php" class="button">Login to Book</a>
+                <?php endif; ?>
+                <br />
+              </div>
+
+            </a>
+          </div>
+        <?php endif; ?>
+        <?php
+        $count++;
+      endforeach;
+      ?>
+    </div>
+  </div>
   </div>
 
 </body>
