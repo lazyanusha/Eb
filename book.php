@@ -310,9 +310,9 @@ if (isset($_SESSION['email'])) {
                         <option value="triple">Triple Bed</option>
                     </select>
 
-                    <label for="number-of-room" class="reservation--label">Room Number:</label>
-                    <select class="reservation--info" name="number-of-room" id="number-of-room">
-                        <option value="" disabled selected>Select room number</option>
+                    <label for="number-of-room" class="reservation--label">Room Quantity:</label>
+                    <select class="reservation--info" name="number-of-room" id="number-of-room"  onchange="updatePriceAndOptions()">
+                        <option value="" disabled selected>Select room quantity</option>
                     </select>
 
                     <label for="guest">Guests:</label><br>
@@ -321,9 +321,11 @@ if (isset($_SESSION['email'])) {
 
                     <label for="adult" class="reservation--label">Adult:</label>
                     <input type="number" name="adult" id="adult">
-
                     <label for="check-in" class="reservation--label">Check-in:</label>
-                    <input type="date" name="check-in" id="check-in" onchange="updatePriceAndOptions()">
+                    <input type="date" name="check-in" id="check-in"
+                        min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" onchange="updatePriceAndOptions()"
+                        required>
+
 
                     <label for="check-out" class="reservation--label">Check-out:</label>
                     <input type="date" name="check-out" id="check-out" onchange="updatePriceAndOptions()">
@@ -364,41 +366,38 @@ if (isset($_SESSION['email'])) {
 
     // Function to update price based on the selected room type and number of days
     function updatePriceAndOptions() {
-        var roomTypeSelect = document.getElementById('room-type');
-        var priceDisplay = document.getElementById('room-price');
-        var priceInput = document.getElementById('price-per-night');
-        var checkInDate = new Date(document.getElementById('check-in').value);
-        var checkOutDate = new Date(document.getElementById('check-out').value);
+    var roomTypeSelect = document.getElementById('room-type');
+    var priceDisplay = document.getElementById('room-price');
+    var priceInput = document.getElementById('price-per-night');
+    var checkInDate = new Date(document.getElementById('check-in').value);
+    var checkOutDate = new Date(document.getElementById('check-out').value);
+    var numberOfRooms = parseInt(document.getElementById('number-of-room').value);
 
-        // Get the selected room type and its price
-        var selectedOption = roomTypeSelect.options[roomTypeSelect.selectedIndex];
-        var pricePerNight = parseFloat(selectedOption.getAttribute('data-price'));
+    // Get the selected room type and its price
+    var selectedOption = roomTypeSelect.options[roomTypeSelect.selectedIndex];
+    var pricePerNight = parseFloat(selectedOption.getAttribute('data-price'));
 
-        // Calculate the number of days
-        var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-        var diffDays = Math.round(Math.abs((checkOutDate - checkInDate) / oneDay));
+    // Calculate the number of days
+    var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+    var diffDays = Math.round(Math.abs((checkOutDate - checkInDate) / oneDay));
 
-        // If check-out date is the same as check-in date, consider it as one night stay
-        if (diffDays === 0) {
-            diffDays = 1; // Consider it as one night stay
-        }
-        var totalPrice = pricePerNight * diffDays;
-
-        // Update the displayed price
-        priceDisplay.value = '$' + totalPrice.toFixed(2);
-        priceInput.value = totalPrice.toFixed(2);
+    if (diffDays === 0) {
+        diffDays = 1; 
     }
+
+    var totalPrice = pricePerNight * diffDays * numberOfRooms;
+
+    priceDisplay.value = '$' + totalPrice.toFixed(2);
+    priceInput.value = totalPrice.toFixed(2);
+}
 
     // Function to update room numbers based on the selected room type
     function updateRoomNumbers() {
         var roomType = document.getElementById('room-type').value;
         var maxRooms = <?php echo json_encode($rooms); ?>[roomType];
 
-        // Clear the existing options
         var selectRoom = document.getElementById('number-of-room');
-        selectRoom.innerHTML = '';
-
-        // Generate options for room numbers
+    
         for (var i = 1; i <= maxRooms; i++) {
             var option = document.createElement('option');
             option.value = i;
@@ -410,29 +409,28 @@ if (isset($_SESSION['email'])) {
 
     document.getElementById('room-type').addEventListener('change', updateRoomNumbers);
     updateRoomNumbers();
+    updatePriceAndOptions();
 
-    // Get today's date
-    // Function to update the minimum date for check-out
-    function updateMinCheckoutDate() {
-        var checkinInput = document.getElementById('check-in');
-        var checkoutInput = document.getElementById('check-out');
+    document.getElementById('check-in').addEventListener('change', function () {
+        var checkInDate = new Date(this.value);
+        var checkOutInput = document.getElementById('check-out');
+        checkOutInput.min = formatDate(new Date(checkInDate.setDate(checkInDate.getDate() + 1)));
+    });
 
-        // Get the value of the check-in date input
-        var checkinDate = new Date(checkinInput.value);
+    function formatDate(date) {
+        var day = date.getDate();
+        var month = date.getMonth() + 1;
+        var year = date.getFullYear();
 
-        // Calculate the minimum check-out date (next day of check-in)
-        var minCheckoutDate = new Date(checkinDate);
-        minCheckoutDate.setDate(checkinDate.getDate() + 1);
+        if (month < 10) {
+            month = '0' + month;
+        }
+        if (day < 10) {
+            day = '0' + day;
+        }
 
-        // Format the minimum check-out date to 'YYYY-MM-DD'
-        var minCheckoutDateString = minCheckoutDate.toISOString().split('T')[0];
-
-        // Set the minimum date for check-out input
-        checkoutInput.min = minCheckoutDateString;
+        return year + '-' + month + '-' + day;
     }
-
-    // Attach an event listener to the check-in input to trigger the updateMinCheckoutDate function
-    document.getElementById('check-in').addEventListener('change', updateMinCheckoutDate);
 
 </script>
 

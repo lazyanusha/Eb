@@ -2,78 +2,73 @@
 session_start();
 include 'connection.php';
 
-$hotelName = $_POST['hotelName'];
-$hotelLocation = $_POST['hotelLocation'];
-$hotelEmail = $_POST['hotelEmail'];
-$hotelContact = $_POST['hotelContact'];
-$description = $_POST['description'];
-$ratings = $_POST['ratings'];
+// Check if form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Retrieve form data
+    $hotelName = $_POST['hotelName'];
+    $hotelLocation = $_POST['hotelLocation'];
+    $hotelEmail = $_POST['hotelEmail'];
+    $hotelContact = $_POST['hotelContact'];
+    $description = $_POST['description'];
+    $ratings = $_POST['ratings'];
 
-if (isset($_FILES['image'])) {
-    $file_name = $_FILES['image']['name'];
-    $file_temp = $_FILES['image']['tmp_name'];
+    // Check if image file is uploaded
+    if (isset($_FILES['image'])) {
+        $file_name = $_FILES['image']['name'];
+        $file_temp = $_FILES['image']['tmp_name'];
+        move_uploaded_file($file_temp, "uploads/" . $file_name);
+    }
 
-    move_uploaded_file($file_temp, "uploads/" . $file_name);
-}
+    // Prepare and execute SQL statement for hotel insertion
+    $sql = "INSERT INTO hotels (hotel_name, hotel_email, hotel_address, hotel_contact, description, photos, ratings) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "ssssssi", $hotelName, $hotelEmail, $hotelLocation, $hotelContact, $description, $file_name, $ratings);
 
-$sql = "INSERT INTO hotels (hotel_name, hotel_email, hotel_address, hotel_contact, description, photos, ratings) 
-        VALUES (?, ?, ?, ?, ?, ?, ?)";
+    if (mysqli_stmt_execute($stmt)) {
+        // Retrieve the last inserted hotel ID
+        $hotelId = mysqli_insert_id($conn);
 
-$stmt = mysqli_prepare($conn, $sql);
+        if ($hotelId) {
+            $_SESSION['hotel_id'] = $hotelId;
 
-mysqli_stmt_bind_param($stmt, "ssssssi", $hotelName, $hotelEmail, $hotelLocation, $hotelContact, $description, $file_name, $ratings);
+            // Insert room data into rooms table
+            $roomTypes = $_POST['room-type'];
+            $roomPrices = $_POST['price'];
+            $roomQuantities = $_POST['room-quantity'];
 
-if (mysqli_stmt_execute($stmt)) {
-    $hotelId = mysqli_insert_id($conn);
+            foreach ($roomTypes as $key => $roomType) {
+                $roomPrice = $roomPrices[$key];
+                $roomQuantity = $roomQuantities[$key];
 
-    $_SESSION['hotel_id'] = $hotelId;
+                $sql = "INSERT INTO rooms (hotel_id, room_type, quantity, price) VALUES (?, ?, ?, ?)";
+                $stmtRoom = mysqli_prepare($conn, $sql);
+                mysqli_stmt_bind_param($stmtRoom, "isdd", $hotelId, $roomType, $roomQuantity, $roomPrice);
+                mysqli_stmt_execute($stmtRoom);
+                mysqli_stmt_close($stmtRoom);
+            }
 
-    // Retrieve room numbers from the form data
-    $roomNumbers = $_POST['room_numbers'];
+            // Insert service data into services table
+            $services = $_POST['service-name'];
+            foreach ($services as $service) {
+                $sql = "INSERT INTO services (hotel_id, service) VALUES (?, ?)";
+                $stmtService = mysqli_prepare($conn, $sql);
+                mysqli_stmt_bind_param($stmtService, "is", $hotelId, $service);
+                mysqli_stmt_execute($stmtService);
+                mysqli_stmt_close($stmtService);
+            }
 
-    // Loop through room data and insert into database
-    // Retrieve room types and their associated prices
-    $roomTypes = $_POST['room-type'];
-    $roomPrices = $_POST['price'];
-
-    // Loop through room data and insert into database
-    foreach ($roomNumbers as $roomType => $roomTypeNumbers) {
-        foreach ($roomTypeNumbers as $roomNumber) {
-            // Retrieve the price for the current room type
-            $roomPrice = $roomPrices[$roomType]; // Use room type as key to retrieve price
-
-            // Prepare the SQL statement for room insertion
-            $sql = "INSERT INTO rooms (hotel_id, room_type, room_number, Price) 
-            VALUES (?, ?, ?, ?)";
-
-            $stmt = mysqli_prepare($conn, $sql);
-
-            // Bind parameters to the prepared statement
-            mysqli_stmt_bind_param($stmt, "isss", $hotelId, $roomType, $roomNumber, $roomPrice);
-
-            // Execute the prepared statement
-            mysqli_stmt_execute($stmt);
+            mysqli_stmt_close($stmt);
+            echo "<script>alert('Entry Successful!!'); window.location='imagegallery.php';</script>";
+            exit();
+        } else {
+            echo "<script>alert('Error: Unable to retrieve hotel ID.'); window.location='hoteladd.php';</script>";
         }
+    } else {
+        echo "<script>alert('Error: " . mysqli_error($conn) . "'); window.location='hoteladd.php';</script>";
     }
 
-
-    // Insert services
-    $services = $_POST['service-name'];
-    foreach ($services as $service) {
-        $sql = "INSERT INTO services (hotel_id, service) VALUES (?, ?)";
-        $stmt = mysqli_prepare($conn, $sql);
-        mysqli_stmt_bind_param($stmt, "is", $hotelId, $service);
-        mysqli_stmt_execute($stmt);
-    }
-
-    mysqli_stmt_close($stmt);
-
-    echo "<script>alert('Entry Successful!!'); window.location='hoteladd.php';</script>";
-
-    exit();
+    mysqli_close($conn);
 } else {
-    $_SESSION['error_message'] = "Error: " . mysqli_error($conn);
-
-    header("Location: hoteladd.php");
-    exit();
+    echo "<script>alert('Invalid request!'); window.location='hoteladd.php';</script>";
 }
