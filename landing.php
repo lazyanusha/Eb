@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+  session_start();
+}
 $backgroundImagePath = "./images/abc.jpg";
 include 'connection.php';
 include 'nav.php';

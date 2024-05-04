@@ -1,6 +1,8 @@
 <?php
-session_start();
-include 'connection.php'; 
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+include 'connection.php';
 
 function hashPassword($password)
 {
@@ -8,7 +10,8 @@ function hashPassword($password)
 }
 
 // Function to get the next available user ID
-function getNextUserID($conn) {
+function getNextUserID($conn)
+{
     $result = mysqli_query($conn, "SELECT MAX(user_id) AS max_id FROM users");
     $row = mysqli_fetch_assoc($result);
     $maxID = $row['max_id'];

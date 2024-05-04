@@ -23,9 +23,13 @@ if ($result) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Booking Manage</title>
+  <title>Room Details </title>
   <link rel="stylesheet" href="./css/dashboard.css">
   <style>
+    .second--section {
+      padding: 20px 55px;
+    }
+
     select {
       font-size: 16px;
       padding: 9px 13px;
@@ -42,7 +46,7 @@ if ($result) {
     }
 
     button {
-      padding: 8px 15px !important;
+      padding: 8px 25px !important;
       padding-top: 20px;
       cursor: pointer;
       background: linear-gradient(to top, #7969c7, #2b3454);
@@ -54,7 +58,6 @@ if ($result) {
       padding: 8px 20px;
       border: 1px solid #7969c7;
     }
-
 
     .more--details {
       display: flex;
@@ -85,25 +88,24 @@ if ($result) {
     <div class="second--section">
       <div class="heading">
         <div class="part">
-          <h2>Booking Details...</h2>
+          <h2>Room Details!!</h2>
           <!-- <a href="dashboard.php"><button>Back</button></a> -->
         </div>
         <div class="search">
           <form action="#" id="searchForm" onsubmit="return true;">
-            <input type="search" placeholder="search here" name="search" />
+            <input type="search" id="searchInput" placeholder="search here" name="search" />
             <button type="submit" onclick="searchTable()">search</button>
           </form>
         </div>
       </div>
       <div class="more--details">
-
         <table border="1px" style="border-collapse: collapse; width: 100%">
           <thead>
             <tr>
               <th>Room Id</th>
               <th>Hotel Id</th>
               <th>Room Type</th>
-              <th>Room Number</th>
+              <th>Room Quantity</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -115,9 +117,7 @@ if ($result) {
                   <?php echo $row['hotel_id']; ?>
                 </td>
                 <td><?php echo $row['room_type']; ?></td>
-                <td><?php echo $row['room_number']; ?></td>
-
-
+                <td><?php echo $row['quantity']; ?></td>
                 <td>
                   <form action="reservation_update.php" method="post"
                     onsubmit="updateReservationStatus(this); return false;">
@@ -126,20 +126,17 @@ if ($result) {
                       <option value="available" <?php if ($row['availability'] == "available")
                         echo 'selected'; ?>>
                         Available</option>
-                      <option value="bookeded" <?php if ($row['availability'] == "bookeded")
+                      <option value="booked" <?php if ($row['availability'] == "booked")
                         echo 'selected'; ?>>
                         Booked</option>
-                      <option value="not in serviceled" <?php if ($row['availability'] == "not in serviceled")
+                      <option value="not in service" <?php if ($row['availability'] == "not in service")
                         echo 'selected'; ?>>
                         Not in service</option>
 
                     </select>
                     <button type="submit" name="submit">Update</button>
                   </form>
-
-
                 </td>
-
               </tr>
 
             <?php endforeach; ?>
@@ -150,7 +147,6 @@ if ($result) {
 
   </div>
   <div class="footer"></div>
-
 
   <script>
     function searchTable() {

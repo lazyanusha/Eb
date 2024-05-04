@@ -21,7 +21,6 @@ if ($result) {
 }
 
 // Initialize variables
-$services = [];
 $rooms = [];
 $total_rooms = 0;
 $available_rooms = 0;
@@ -80,9 +79,10 @@ if (!isset($_POST['query'])) {
         border: none;
         justify-content: center;
     }
+
     input {
-      padding: 8px 20px;
-      border: 1px solid #7969c7;
+        padding: 8px 20px;
+        border: 1px solid #7969c7;
     }
 </style>
 
@@ -106,11 +106,11 @@ if (!isset($_POST['query'])) {
                     <!-- <a href="dashboard.php"><button>Back</button></a> -->
                 </div>
                 <div class="search">
-          <form action="#" id="searchForm" onsubmit="return true;">
-            <input type="search" placeholder="search here" name="search" />
-            <button type="submit" onclick="searchTable()">search</button>
-          </form>
-        </div>
+                    <form action="#" id="searchForm" onsubmit="return true;">
+                        <input type="search" placeholder="search here" name="search" />
+                        <button type="submit" onclick="searchTable()">search</button>
+                    </form>
+                </div>
             </div>
             <div class="more--details">
 
@@ -123,7 +123,6 @@ if (!isset($_POST['query'])) {
                             <th rowspan="2">Contact</th>
                             <th rowspan="2">Location</th>
                             <th colspan="4">Rooms</th>
-                            <th rowspan="2">Services</th>
                             <th rowspan="2">Action</th>
                         </tr>
                         <tr>
@@ -145,13 +144,12 @@ if (!isset($_POST['query'])) {
                                 <td><?php echo $hotel['hotel_email']; ?></td>
                                 <td><?php echo $hotel['hotel_contact']; ?></td>
                                 <td><?php echo $hotel['hotel_address']; ?></td>
+                                
                                 <!-- Display rooms data -->
                                 <td><?php echo implode(", ", array_keys($rooms)); ?></td>
                                 <td><?php echo $total_rooms; ?></td>
                                 <td><?php echo $available_rooms; ?></td>
                                 <td><?php echo $inquired_rooms; ?></td>
-                                <!-- Display services data -->
-                                <td><?php echo implode(", ", $services); ?></td>
 
                                 <td class="action">
                                     <form action="update.php" method="post">

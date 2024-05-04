@@ -1,6 +1,8 @@
 <?php
 
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 include 'connection.php';
 include 'nav.php';
 if (!isset($_SESSION['email'])) {
@@ -376,7 +378,7 @@ if (isset($_SESSION['email'])) {
 
         return true;
     }
-validateForm();
+    validateForm();
 
 
 </script>
