@@ -1,6 +1,7 @@
 <?php
 session_start();
 include 'connection.php';
+include 'nav.php';
 if (!isset($_SESSION['email'])) {
     header("location: login.php");
     exit;
@@ -100,26 +101,45 @@ if (isset($_GET['hotel_id'])) {
 
 if (isset($_SESSION['email'])) {
     $userEmail = $_SESSION['email'];
+    $sql_admin = "SELECT fullname, phone FROM admins WHERE email = ?";
     $sql_user = "SELECT fullname, phone FROM users WHERE email = ?";
+    $stmt_admin = mysqli_prepare($conn, $sql_admin);
     $stmt_user = mysqli_prepare($conn, $sql_user);
-    if ($stmt_user) {
+
+    if ($stmt_admin && $stmt_user) {
+        mysqli_stmt_bind_param($stmt_admin, "s", $_SESSION['email']);
         mysqli_stmt_bind_param($stmt_user, "s", $_SESSION['email']);
-        if (mysqli_stmt_execute($stmt_user)) {
-            $result_user = mysqli_stmt_get_result($stmt_user);
-            if ($row_user = mysqli_fetch_assoc($result_user)) {
-                $guestName = $row_user['fullname'];
-                $contact = $row_user['phone'];
+
+        if (mysqli_stmt_execute($stmt_admin)) {
+            $result_admin = mysqli_stmt_get_result($stmt_admin);
+            if ($row_admin = mysqli_fetch_assoc($result_admin)) {
+                $guestName = $row_admin['fullname'];
+                $contact = $row_admin['phone'];
+            }
+            mysqli_stmt_close($stmt_admin);
+        } else {
+            echo "Error executing admin query: " . mysqli_error($conn);
+            exit;
+        }
+
+        if (empty($guestName)) {
+            if (mysqli_stmt_execute($stmt_user)) {
+                $result_user = mysqli_stmt_get_result($stmt_user);
+                if ($row_user = mysqli_fetch_assoc($result_user)) {
+                    $guestName = $row_user['fullname'];
+                    $contact = $row_user['phone'];
+                } else {
+                    echo "User not found.";
+                    exit;
+                }
             } else {
-                echo "User not found.";
+                echo "Error executing user query: " . mysqli_error($conn);
                 exit;
             }
-        } else {
-            echo "Error executing user query: " . mysqli_error($conn);
-            exit;
         }
         mysqli_stmt_close($stmt_user);
     } else {
-        echo "Error preparing user query: " . mysqli_error($conn);
+        echo "Error preparing queries: " . mysqli_error($conn);
         exit;
     }
 } else {
@@ -190,25 +210,6 @@ if (isset($_SESSION['email'])) {
 </head>
 
 <body>
-    <div>
-        <nav class="navigation_bar">
-            <div class="logo">
-                <a href="home.php"><img src="./images/logo3.png" alt="logo"></a>
-            </div>
-            <div class="menu">
-                <ul>
-                    <li><a href="landing.php">Home</a></li>
-                    <li><a href="Aboutus.php">About Us</a></li>
-                    <li><a href="hotellist.php">Hotels</a></li>
-                    <li><a href="contact_us.php">Contact Us</a></li>
-                </ul>
-            </div>
-            <div class="new">
-                <a href="logout.php">Log Out</a>
-            </div>
-        </nav>
-    </div>
-
     <div class="image">
         <div class="carousel-container">
             <div class="carousel">

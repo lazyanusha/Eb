@@ -1,7 +1,7 @@
 <?php
 include 'connection.php';
 // Fetch room details from the database
-$sql = "SELECT count(quantity) AS total_rooms FROM rooms";
+$sql = "SELECT sum(quantity) AS total_rooms FROM rooms";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $total_rooms = $row['total_rooms'];

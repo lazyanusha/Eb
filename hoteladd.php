@@ -199,6 +199,9 @@ include 'connection.php';
             div.innerHTML = roomField.trim();
             container.appendChild(div.firstChild);
         }
+        function removeRoomField(element) {
+            element.parentNode.remove();
+        }
 
 
 

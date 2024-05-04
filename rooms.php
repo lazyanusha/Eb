@@ -1,9 +1,20 @@
 <?php
-
 include 'connection.php';
-$sql = "SELECT * FROM rooms
-ORDER BY CASE WHEN availability = 'available' THEN 0 ELSE 1 END, room_id ASC";
 
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
+  $room_id = $_POST['room_id'];
+  $availability = $_POST['availability'];
+  $sql = "UPDATE rooms SET availability = '$availability' WHERE room_id = $room_id";
+  $result = mysqli_query($conn, $sql);
+  if ($result) {
+    echo "<script>alert('Entry success!!'); window.location='{$_SERVER['PHP_SELF']}';</script>";
+    exit();
+  } else {
+    echo "Error updating reservation status: " . mysqli_error($conn);
+  }
+}
+
+$sql = "SELECT * FROM rooms ORDER BY CASE WHEN availability = 'available' THEN 0 ELSE 1 END, room_id ASC";
 $result = mysqli_query($conn, $sql);
 $rooms = [];
 
@@ -12,11 +23,11 @@ if ($result) {
     $rooms[] = $row;
   }
 } else {
-  echo "Error fetching admins: " . mysqli_error($conn);
+  echo "Error fetching rooms: " . mysqli_error($conn);
 }
 
+mysqli_close($conn);
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -119,20 +130,16 @@ if ($result) {
                 <td><?php echo $row['room_type']; ?></td>
                 <td><?php echo $row['quantity']; ?></td>
                 <td>
-                  <form action="reservation_update.php" method="post"
-                    onsubmit="updateReservationStatus(this); return false;">
+                  <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
                     <input type="hidden" name="room_id" value="<?php echo $row['room_id']; ?>">
                     <select name="availability">
                       <option value="available" <?php if ($row['availability'] == "available")
-                        echo 'selected'; ?>>
-                        Available</option>
+                        echo 'selected'; ?>>Available
+                      </option>
                       <option value="booked" <?php if ($row['availability'] == "booked")
-                        echo 'selected'; ?>>
-                        Booked</option>
+                        echo 'selected'; ?>>Booked</option>
                       <option value="not in service" <?php if ($row['availability'] == "not in service")
-                        echo 'selected'; ?>>
-                        Not in service</option>
-
+                        echo 'selected'; ?>>Not in service</option>
                     </select>
                     <button type="submit" name="submit">Update</button>
                   </form>
