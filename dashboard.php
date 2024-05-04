@@ -1,7 +1,7 @@
 <?php
 include 'connection.php';
 // Fetch room details from the database
-$sql = "SELECT count(room_number) AS total_rooms FROM rooms";
+$sql = "SELECT count(quantity) AS total_rooms FROM rooms";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $total_rooms = $row['total_rooms'];
@@ -11,13 +11,13 @@ $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $inquired_rooms = $row['inquired_rooms'];
 
-$sql = "SELECT count(room_number) AS booked_rooms FROM rooms WHERE availability = 'booked'";
+$sql = "SELECT count(quantity) AS booked_rooms FROM rooms WHERE availability = 'booked'";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $booked_rooms = $row['booked_rooms'];
 
 
-$sql = "SELECT count(room_number) AS available_rooms FROM rooms WHERE availability = 'available'";
+$sql = "SELECT count(quantity) AS available_rooms FROM rooms WHERE availability = 'available'";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $available_rooms = $row['available_rooms'];

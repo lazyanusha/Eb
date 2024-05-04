@@ -1,6 +1,6 @@
 <?php
 session_start();
-$backgroundImagePath = "./images/hotel.png";
+$backgroundImagePath = "./images/abc.jpg";
 include 'connection.php';
 include 'nav.php';
 

@@ -51,19 +51,17 @@ if (isset($_GET['hotel_id'])) {
         echo "Error preparing services query: " . mysqli_error($conn);
     }
 
-    // Fetch room numbers based on availability from the database
-    $sql_rooms = "SELECT room_type, price, quantity FROM rooms WHERE hotel_id = ? AND availability = 'available'";
+    $sql_rooms = "SELECT room_type, quantity, price FROM rooms WHERE hotel_id = ?";
     $stmt_rooms = mysqli_prepare($conn, $sql_rooms);
     if ($stmt_rooms) {
         mysqli_stmt_bind_param($stmt_rooms, "i", $hotel_id);
         if (mysqli_stmt_execute($stmt_rooms)) {
             $result_rooms = mysqli_stmt_get_result($stmt_rooms);
             if (mysqli_num_rows($result_rooms) > 0) {
-                $availableRooms = [];
                 while ($row_rooms = mysqli_fetch_assoc($result_rooms)) {
                     $rooms[$row_rooms['room_type']] = $row_rooms['quantity'];
+                    // Assign price to each room type
                     $prices[$row_rooms['room_type']] = $row_rooms['price'];
-                    $availableRooms[] = $row_rooms['quantity'];
                 }
             } else {
                 echo "No rooms found for this hotel.";
@@ -71,13 +69,10 @@ if (isset($_GET['hotel_id'])) {
         } else {
             echo "Error executing rooms query: " . mysqli_error($conn);
         }
-        if (empty($availableRooms)) {
-            echo "No rooms available.";
-            exit;
-        }
         mysqli_stmt_close($stmt_rooms);
+    } else {
+        echo "Error preparing rooms query: " . mysqli_error($conn);
     }
-
 
     // Fetch image filenames from the database
     $sql_images = "SELECT image_name FROM hotel_images WHERE hotel_id = ?";
@@ -87,6 +82,7 @@ if (isset($_GET['hotel_id'])) {
         if (mysqli_stmt_execute($stmt_images)) {
             $result_images = mysqli_stmt_get_result($stmt_images);
             while ($row_images = mysqli_fetch_assoc($result_images)) {
+                // Construct file paths for the images
                 $images[] = "uploads/" . $row_images['image_name'];
             }
         } else {
@@ -104,51 +100,33 @@ if (isset($_GET['hotel_id'])) {
 
 if (isset($_SESSION['email'])) {
     $userEmail = $_SESSION['email'];
-    $sql_admin = "SELECT fullname, phone FROM admins WHERE email = ?";
     $sql_user = "SELECT fullname, phone FROM users WHERE email = ?";
-    $stmt_admin = mysqli_prepare($conn, $sql_admin);
     $stmt_user = mysqli_prepare($conn, $sql_user);
-
-    if ($stmt_admin && $stmt_user) {
-        mysqli_stmt_bind_param($stmt_admin, "s", $_SESSION['email']);
+    if ($stmt_user) {
         mysqli_stmt_bind_param($stmt_user, "s", $_SESSION['email']);
-
-        if (mysqli_stmt_execute($stmt_admin)) {
-            $result_admin = mysqli_stmt_get_result($stmt_admin);
-            if ($row_admin = mysqli_fetch_assoc($result_admin)) {
-                $guestName = $row_admin['fullname'];
-                $contact = $row_admin['phone'];
-            }
-            mysqli_stmt_close($stmt_admin);
-        } else {
-            echo "Error executing admin query: " . mysqli_error($conn);
-            exit;
-        }
-
-        if (empty($guestName)) {
-            if (mysqli_stmt_execute($stmt_user)) {
-                $result_user = mysqli_stmt_get_result($stmt_user);
-                if ($row_user = mysqli_fetch_assoc($result_user)) {
-                    $guestName = $row_user['fullname'];
-                    $contact = $row_user['phone'];
-                } else {
-                    echo "User not found.";
-                    exit;
-                }
+        if (mysqli_stmt_execute($stmt_user)) {
+            $result_user = mysqli_stmt_get_result($stmt_user);
+            if ($row_user = mysqli_fetch_assoc($result_user)) {
+                $guestName = $row_user['fullname'];
+                $contact = $row_user['phone'];
             } else {
-                echo "Error executing user query: " . mysqli_error($conn);
+                echo "User not found.";
                 exit;
             }
+        } else {
+            echo "Error executing user query: " . mysqli_error($conn);
+            exit;
         }
         mysqli_stmt_close($stmt_user);
     } else {
-        echo "Error preparing queries: " . mysqli_error($conn);
+        echo "Error preparing user query: " . mysqli_error($conn);
         exit;
     }
 } else {
     echo "User email not found in session.";
     exit;
 }
+
 
 ?>
 
@@ -331,32 +309,11 @@ if (isset($_SESSION['email'])) {
                         <option value="double">Double Bed</option>
                         <option value="triple">Triple Bed</option>
                     </select>
+
                     <label for="number-of-room" class="reservation--label">Room Number:</label>
-                    <table class="reservation--info" id="number-of-room">
-                        <tr>
-                            <th>Date</th>
-                            <?php foreach ($availableRooms as $roomNumber): ?>
-                                <th><?php echo $roomNumber; ?></th>
-                            <?php endforeach; ?>
-                        </tr>
-                        <?php
-                        foreach ($availability as $date => $rooms) {
-                            echo "<tr>";
-                            echo "<td>$date</td>";
-                            foreach ($availableRooms as $roomNumber) {
-                                echo "<td>";
-                                // Check if the room is available on the specific date
-                                if ($rooms[$roomNumber] == 'available') {
-                                    echo "<input type='radio' name='selected-room[$date]' value='$roomNumber'>";
-                                } else {
-                                    echo "Booked";
-                                }
-                                echo "</td>";
-                            }
-                            echo "</tr>";
-                        }
-                        ?>
-                    </table>
+                    <select class="reservation--info" name="number-of-room" id="number-of-room">
+                        <option value="" disabled selected>Select room number</option>
+                    </select>
 
                     <label for="guest">Guests:</label><br>
                     <label for="children" class="reservation--label">Children:</label>
@@ -432,23 +389,23 @@ if (isset($_SESSION['email'])) {
         priceInput.value = totalPrice.toFixed(2);
     }
 
-    // // Function to update room numbers based on the selected room type
-    // function updateRoomNumbers() {
-    //     var roomType = document.getElementById('room-type').value;
-    //     var maxRooms = <?php echo json_encode($rooms); ?>[roomType];
+    // Function to update room numbers based on the selected room type
+    function updateRoomNumbers() {
+        var roomType = document.getElementById('room-type').value;
+        var maxRooms = <?php echo json_encode($rooms); ?>[roomType];
 
-    //     // Clear the existing options
-    //     var selectRoom = document.getElementById('number-of-room');
-    //     selectRoom.innerHTML = '';
+        // Clear the existing options
+        var selectRoom = document.getElementById('number-of-room');
+        selectRoom.innerHTML = '';
 
-    //     // Generate options for room numbers
-    //     for (var i = 1; i <= maxRooms; i++) {
-    //         var option = document.createElement('option');
-    //         option.value = i;
-    //         option.textContent = i;
-    //         selectRoom.appendChild(option);
-    //     }
-    // }
+        // Generate options for room numbers
+        for (var i = 1; i <= maxRooms; i++) {
+            var option = document.createElement('option');
+            option.value = i;
+            option.textContent = i;
+            selectRoom.appendChild(option);
+        }
+    }
 
 
     document.getElementById('room-type').addEventListener('change', updateRoomNumbers);
@@ -476,21 +433,6 @@ if (isset($_SESSION['email'])) {
 
     // Attach an event listener to the check-in input to trigger the updateMinCheckoutDate function
     document.getElementById('check-in').addEventListener('change', updateMinCheckoutDate);
-
-    function updateRoomAvailability() {
-        var checkinDate = document.getElementById('check-in').value;
-
-        // AJAX call to fetch availability data based on the selected check-in date
-        $.ajax({
-            url: 'fetch_room_availability.php', // Change the URL to the PHP script that fetches availability data
-            method: 'POST',
-            data: { checkInDate: checkinDate },
-            success: function (response) {
-                // Update the table with new availability data
-                $('#number-of-room').html(response);
-            }
-        });
-    }
 
 </script>
 

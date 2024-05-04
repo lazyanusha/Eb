@@ -1,7 +1,7 @@
 <?php
 session_start();
 include 'nav.php';
-$backgroundImagePath = "./images/hotel.png";
+$backgroundImagePath = "./images/sunset-pool.jpg";
 ?>
 
 <!DOCTYPE html>
