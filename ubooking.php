@@ -10,24 +10,24 @@ if (!isset($_SESSION['email'])) {
 
 $loggedInEmail = $_SESSION['email'];
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && $_POST["action"] == "cancel" && isset($_POST["reservation_id"])) {
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && $_POST["action"] == "cancelled" && isset($_POST["reservation_id"])) {
     // Handle cancel action
     $reservationId = $_POST["reservation_id"];
-    
+
     // Check if the reservation ID is not already canceled
     if (!isset($_SESSION['canceled_reservations']) || !in_array($reservationId, $_SESSION['canceled_reservations'])) {
         // Add the reservation ID to the session variable
         $_SESSION['canceled_reservations'][] = $reservationId;
-        
+
         $cancelSql = "UPDATE reservations SET reservation_status = 'cancelled' WHERE reservation_id = ? AND email = ?";
         $cancelStmt = $conn->prepare($cancelSql);
         $cancelStmt->bind_param("is", $reservationId, $loggedInEmail);
-        
+
         if ($cancelStmt->execute()) {
-            // Successfully cancelled the booking
-            // You can handle success message or redirect to a different page if needed
+            echo "<script>alert('You have cancelled the reservation!!'); window.location='dashboard.php';</script>";
+
         } else {
-            // Handle cancellation failure
+            exit();
         }
     }
 }
@@ -196,7 +196,8 @@ while ($row = $result->fetch_assoc()) {
                                                 value="<?php echo $info['reservation_id']; ?>">
                                             <input type="hidden" name="action" value="cancelled">
                                             <button type="submit">Update</button>
-                                            <button type="submit" class="button1" onclick="return confirm('Are you sure you want to cancel the reservation?')>Cancel</button>
+                                            <button type="submit" class="button1"
+                                                onclick="return confirm('Are you sure you want to cancel the reservation?')">Cancel</button>
                                         </form>
                                     <?php endif; ?>
 
@@ -234,20 +235,19 @@ while ($row = $result->fetch_assoc()) {
         }
         $(document).ready(function () {
             $('.cancel-form').submit(function (e) {
-                e.preventDefault(); // Prevent form submission
+                e.preventDefault(); 
                 var form = $(this);
                 var url = form.attr('action');
                 var formData = form.serialize(); // Serialize form data
-                
+
                 $.post(url, formData, function (response) {
-                    // Handle response if needed
                     console.log(response);
-                    // Reload the page after cancellation
+
                     location.reload();
                 });
             });
         });
-        
+
     </script>
 
 </body>

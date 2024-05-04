@@ -290,6 +290,12 @@ if (isset($_SESSION['email'])) {
                     <input type="hidden" name="fullname" value="<?php echo $guestName; ?>">
                     <input type="hidden" name="contact" value="<?php echo $contact; ?>">
                     <input type="hidden" name="email" value="<?php echo isset($userEmail) ? $userEmail : ''; ?>">
+                    <label for="check-in" class="reservation--label">Check-in:</label>
+                    <input type="date" name="check-in" id="check-in"
+                        min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" onchange="updatePriceAndOptions()"
+                        required>
+                    <label for="check-out" class="reservation--label">Check-out:</label>
+                    <input type="date" name="check-out" id="check-out" onchange="updatePriceAndOptions()">
 
                     <!-- Room Type Selection -->
                     <label for="room-type" class="reservation--label">Type of room:</label>
@@ -312,24 +318,17 @@ if (isset($_SESSION['email'])) {
                     </select>
 
                     <label for="number-of-room" class="reservation--label">Room Quantity:</label>
-                    <select class="reservation--info" name="number-of-room" id="number-of-room"  onchange="updatePriceAndOptions()">
+                    <select class="reservation--info" name="number-of-room" id="number-of-room"
+                        onchange="updatePriceAndOptions()">
                         <option value="" disabled selected>Select room quantity</option>
                     </select>
 
-                    <label for="guest">Guests:</label><br>
+                    <label for="guest">Guests:</label><br><br>
                     <label for="children" class="reservation--label">Children:</label>
                     <input type="number" name="children" id="children">
 
                     <label for="adult" class="reservation--label">Adult:</label>
                     <input type="number" name="adult" id="adult">
-                    <label for="check-in" class="reservation--label">Check-in:</label>
-                    <input type="date" name="check-in" id="check-in"
-                        min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" onchange="updatePriceAndOptions()"
-                        required>
-
-
-                    <label for="check-out" class="reservation--label">Check-out:</label>
-                    <input type="date" name="check-out" id="check-out" onchange="updatePriceAndOptions()">
 
                     <label for="room-price" class="reservation--label">Price per night:</label>
                     <input type="text" name="total-price" id="room-price" class="reservation--info" readonly>
@@ -367,30 +366,30 @@ if (isset($_SESSION['email'])) {
 
     // Function to update price based on the selected room type and number of days
     function updatePriceAndOptions() {
-    var roomTypeSelect = document.getElementById('room-type');
-    var priceDisplay = document.getElementById('room-price');
-    var priceInput = document.getElementById('price-per-night');
-    var checkInDate = new Date(document.getElementById('check-in').value);
-    var checkOutDate = new Date(document.getElementById('check-out').value);
-    var numberOfRooms = parseInt(document.getElementById('number-of-room').value);
+        var roomTypeSelect = document.getElementById('room-type');
+        var priceDisplay = document.getElementById('room-price');
+        var priceInput = document.getElementById('price-per-night');
+        var checkInDate = new Date(document.getElementById('check-in').value);
+        var checkOutDate = new Date(document.getElementById('check-out').value);
+        var numberOfRooms = parseInt(document.getElementById('number-of-room').value);
 
-    // Get the selected room type and its price
-    var selectedOption = roomTypeSelect.options[roomTypeSelect.selectedIndex];
-    var pricePerNight = parseFloat(selectedOption.getAttribute('data-price'));
+        // Get the selected room type and its price
+        var selectedOption = roomTypeSelect.options[roomTypeSelect.selectedIndex];
+        var pricePerNight = parseFloat(selectedOption.getAttribute('data-price'));
 
-    // Calculate the number of days
-    var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
-    var diffDays = Math.round(Math.abs((checkOutDate - checkInDate) / oneDay));
+        // Calculate the number of days
+        var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+        var diffDays = Math.round(Math.abs((checkOutDate - checkInDate) / oneDay));
 
-    if (diffDays === 0) {
-        diffDays = 1; 
+        if (diffDays === 0) {
+            diffDays = 1;
+        }
+
+        var totalPrice = pricePerNight * diffDays * numberOfRooms;
+
+        priceDisplay.value = '$' + totalPrice.toFixed(2);
+        priceInput.value = totalPrice.toFixed(2);
     }
-
-    var totalPrice = pricePerNight * diffDays * numberOfRooms;
-
-    priceDisplay.value = '$' + totalPrice.toFixed(2);
-    priceInput.value = totalPrice.toFixed(2);
-}
 
     // Function to update room numbers based on the selected room type
     function updateRoomNumbers() {
@@ -398,7 +397,7 @@ if (isset($_SESSION['email'])) {
         var maxRooms = <?php echo json_encode($rooms); ?>[roomType];
 
         var selectRoom = document.getElementById('number-of-room');
-    
+
         for (var i = 1; i <= maxRooms; i++) {
             var option = document.createElement('option');
             option.value = i;
@@ -436,3 +435,6 @@ if (isset($_SESSION['email'])) {
 </script>
 
 </html>
+<?php
+include 'footer.php';
+?>

@@ -63,6 +63,7 @@ body {
   display: flex;
   align-items: center;
   margin-right: 20px;
+  cursor: pointer;
 }
 .drop {
   position: relative;
@@ -114,7 +115,10 @@ body {
 .dropdown.clicked .dropdown-content {
   display: block;
 }
+.default-profile-image{
+  color: #f9f9f9;
 
+}
 /* Adjustments for mobile view */
 @media screen and (max-width: 768px) {
   .dropdown {
@@ -169,13 +173,15 @@ form {
   margin: 0 10px;
 }
 button {
-  background-color: transparent;
+  background: linear-gradient(to top, #7969c7, #2b3454);
   border: none;
   align-items: center;
+  font-size: 15px;
+  color: #f9f9f9;
 }
 button i {
   margin-top: -10px;
-  color: #4d545c;
+  color: #7969c7;
   font-size: 20px;
   transform: rotate(360deg);
   cursor: pointer;
@@ -298,7 +304,7 @@ i {
 }
 
 .button-1 {
-  background-color: #41b728;
+  background: linear-gradient(to top, #7969c7, #2b3454);
   width: 30%;
   letter-spacing: 0.04rem;
   color: white;
