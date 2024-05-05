@@ -204,9 +204,7 @@ if (isset($_SESSION['email'])) {
           <option value="cash">Cash</option>
           <option value="online">Online payment</option>
         </select>
-
-        <button type="submit" class="submit">Check Availability</button>
-
+        <button type="submit" class="submit">Update Status</button>
       </div>
     </form>
   </div>

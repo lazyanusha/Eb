@@ -96,7 +96,7 @@ while ($row = mysqli_fetch_assoc($result)) {
         </div>
         <div class="search">
           <form action="#" id="searchForm" onsubmit="return true;">
-            <input type="search" placeholder="search here" name="search" />
+          <input type="search" placeholder="search here" id="searchInput" />
             <button type="submit" onclick="searchTable()">search</button>
           </form>
         </div>
@@ -144,25 +144,25 @@ while ($row = mysqli_fetch_assoc($result)) {
                 </td>
 
                 <td>
-                  <form action="reservation_update.php" method="post"
-                    onsubmit="updateReservationStatus(this); return false;">
-                    <input type="hidden" name="reservation_id" value="<?php echo $info['reservation_id']; ?>">
-                    <select name="reservation_status">
-                      <option value="Pending" <?php if ($info['reservation_status'] == "pending")
-                        echo 'selected'; ?>>
-                        Pending</option>
-                      <option value="Confirmed" <?php if ($info['reservation_status'] == "confirmed")
-                        echo 'selected'; ?>>
-                        Confirm</option>
-                      <option value="Cancelled" <?php if ($info['reservation_status'] == "cancelled")
-                        echo 'selected'; ?>>
-                        Cancel</option>
-
-                    </select>
-                    <button type="submit" name="submit">Update</button>
-                  </form>
-
-
+                  <?php if ($info['reservation_status'] == 'confirmed' || $info['reservation_status'] == 'cancelled'): ?>
+                    <button type="button" disabled>View</button>
+                  <?php elseif ($info['reservation_status'] == 'pending'): ?>
+                    <form action="reservation_update.php" method="post"
+                      onsubmit="updateReservationStatus(this); return false;">
+                      <input type="hidden" name="reservation_id" value="<?php echo $info['reservation_id']; ?>">
+                      <select name="reservation_status">
+                        <option value="Pending" <?php if ($info['reservation_status'] == "pending")
+                          echo 'selected'; ?>>
+                          Pending</option>
+                        <option value="Confirmed" <?php if ($info['reservation_status'] == "confirmed")
+                          echo 'selected'; ?>>
+                          Confirm</option>
+                        <option value="Cancelled" <?php if ($info['reservation_status'] == "cancelled")
+                          echo 'selected'; ?>>
+                          Cancel</option>
+                      </select>
+                      <button type="submit" name="submit">Update</button>
+                    </form> <?php endif; ?>
                 </td>
 
               </tr>

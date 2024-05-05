@@ -8,6 +8,7 @@ if (!isset($_SESSION['email'])) {
 }
 
 $hotelName = $hotelLocation = $hotelEmail = $hotelContact = $description = '';
+
 $services = $rooms = array();
 $images = array();
 
@@ -61,7 +62,6 @@ if (isset($_GET['hotel_id'])) {
             if (mysqli_num_rows($result_rooms) > 0) {
                 while ($row_rooms = mysqli_fetch_assoc($result_rooms)) {
                     $rooms[$row_rooms['room_type']] = $row_rooms['quantity'];
-                    // Assign price to each room type
                     $prices[$row_rooms['room_type']] = $row_rooms['price'];
                 }
             } else {
@@ -101,33 +101,32 @@ if (isset($_GET['hotel_id'])) {
 
 if (isset($_SESSION['email'])) {
     $userEmail = $_SESSION['email'];
-    $sql_admin = "SELECT fullname, phone FROM admins WHERE email = ?";
-    $sql_user = "SELECT fullname, phone FROM users WHERE email = ?";
+    $sql_admin = "SELECT * FROM admins WHERE email = ?";
+    $sql_user = "SELECT * FROM users WHERE email = ?";
     $stmt_admin = mysqli_prepare($conn, $sql_admin);
     $stmt_user = mysqli_prepare($conn, $sql_user);
 
     if ($stmt_admin && $stmt_user) {
         mysqli_stmt_bind_param($stmt_admin, "s", $_SESSION['email']);
         mysqli_stmt_bind_param($stmt_user, "s", $_SESSION['email']);
-
         if (mysqli_stmt_execute($stmt_admin)) {
             $result_admin = mysqli_stmt_get_result($stmt_admin);
             if ($row_admin = mysqli_fetch_assoc($result_admin)) {
                 $guestName = $row_admin['fullname'];
-                $contact = $row_admin['phone'];
+                $contacts = $row_admin['phone'];
             }
             mysqli_stmt_close($stmt_admin);
         } else {
             echo "Error executing admin query: " . mysqli_error($conn);
             exit;
-        }
+        }   
 
         if (empty($guestName)) {
             if (mysqli_stmt_execute($stmt_user)) {
                 $result_user = mysqli_stmt_get_result($stmt_user);
                 if ($row_user = mysqli_fetch_assoc($result_user)) {
                     $guestName = $row_user['fullname'];
-                    $contact = $row_user['phone'];
+                    $contacts = $row_user['phone'];
                 } else {
                     echo "User not found.";
                     exit;
@@ -146,7 +145,6 @@ if (isset($_SESSION['email'])) {
     echo "User email not found in session.";
     exit;
 }
-
 
 ?>
 
@@ -288,12 +286,12 @@ if (isset($_SESSION['email'])) {
                 <div class="reservation">
                     <input type="hidden" name="hotel_id" value="<?php echo $hotel_id; ?>">
                     <input type="hidden" name="fullname" value="<?php echo $guestName; ?>">
-                    <input type="hidden" name="contact" value="<?php echo $contact; ?>">
+                    <input type="hidden" name="contact" value="<?php echo $contacts; ?>">
                     <input type="hidden" name="email" value="<?php echo isset($userEmail) ? $userEmail : ''; ?>">
                     <label for="check-in" class="reservation--label">Check-in:</label>
-                    <input type="date" name="check-in" id="check-in"
-                        min="<?php echo date('Y-m-d', strtotime('+1 day')); ?>" onchange="updatePriceAndOptions()"
-                        required>
+                    <input type="date" name="check-in" id="check-in" min="<?php echo date('Y-m-d'); ?>"
+                        onchange="updatePriceAndOptions()" required>
+
                     <label for="check-out" class="reservation--label">Check-out:</label>
                     <input type="date" name="check-out" id="check-out" onchange="updatePriceAndOptions()">
 

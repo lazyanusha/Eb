@@ -75,6 +75,7 @@ if (isset($_SESSION['email'])) {
             <thead>
                 <tr>
                     <th>S.no</th>
+                    <th>Date/Time</th>
                     <th>Message</th>
                     <th>Action</th>
                 </tr>
@@ -82,7 +83,7 @@ if (isset($_SESSION['email'])) {
             <tbody>
                 <?php
                 // Fetch reservation status from the database
-                $sql_reservation = "SELECT reservation_status FROM reservations WHERE email = ?";
+                $sql_reservation = "SELECT reservation_status, booking_date FROM reservations WHERE email = ? ORDER BY booking_date DESC";
                 $stmt_reservation = mysqli_prepare($conn, $sql_reservation);
 
                 if ($stmt_reservation) {
@@ -101,15 +102,15 @@ if (isset($_SESSION['email'])) {
                                     break;
                                 case "cancelled":
                                     $notificationMessage = "We are sorry, your reservation has been declined because of various technical problems. Would you like to try on other hotels?";
-
                                     break;
                                 default:
-                                    $notificationMessage = "Reservation status oncheck.";
+                                    $notificationMessage = "Reservation status on check.";
                             }
 
                             // Display notification message in the HTML table
                             echo '<tr>';
                             echo '<td>' . $serialNumber . '</td>';
+                            echo '<td>' . $row_reservation['booking_date'] . '</td>';
                             echo '<td>' . $notificationMessage . '</td>';
                             echo '<td><button>Delete</button></td>';
                             echo '</tr>';

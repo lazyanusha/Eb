@@ -49,7 +49,6 @@ if ($result) {
       <div class="heading">
         <div class="part">
           <h2>Admin Details...</h2>
-          <!-- <a href="dashboard.php"><button>Back</button></a> -->
         </div>
         <div class="search">
           <a href="add-admin.php">
