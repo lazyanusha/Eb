@@ -53,7 +53,7 @@ if (isset($_GET['hotel_id'])) {
         echo "Error preparing services query: " . mysqli_error($conn);
     }
 
-    $sql_rooms = "SELECT room_type, quantity, price FROM rooms WHERE hotel_id = ?";
+    $sql_rooms = "SELECT room_type, quantity, price FROM rooms WHERE hotel_id = ? AND availability = 'available'";
     $stmt_rooms = mysqli_prepare($conn, $sql_rooms);
     if ($stmt_rooms) {
         mysqli_stmt_bind_param($stmt_rooms, "i", $hotel_id);
@@ -75,7 +75,6 @@ if (isset($_GET['hotel_id'])) {
         echo "Error preparing rooms query: " . mysqli_error($conn);
     }
 
-    // Fetch image filenames from the database
     $sql_images = "SELECT image_name FROM hotel_images WHERE hotel_id = ?";
     $stmt_images = mysqli_prepare($conn, $sql_images);
     if ($stmt_images) {
@@ -83,7 +82,6 @@ if (isset($_GET['hotel_id'])) {
         if (mysqli_stmt_execute($stmt_images)) {
             $result_images = mysqli_stmt_get_result($stmt_images);
             while ($row_images = mysqli_fetch_assoc($result_images)) {
-                // Construct file paths for the images
                 $images[] = "uploads/" . $row_images['image_name'];
             }
         } else {
@@ -94,51 +92,32 @@ if (isset($_GET['hotel_id'])) {
         echo "Error preparing image query: " . mysqli_error($conn);
     }
 
-
 } else {
     echo "Hotel ID not found in query string.";
 }
 
 if (isset($_SESSION['email'])) {
     $userEmail = $_SESSION['email'];
-    $sql_admin = "SELECT * FROM admins WHERE email = ?";
-    $sql_user = "SELECT * FROM users WHERE email = ?";
-    $stmt_admin = mysqli_prepare($conn, $sql_admin);
+    $sql_user = "SELECT fullname, phone FROM users WHERE email = ?";
     $stmt_user = mysqli_prepare($conn, $sql_user);
-
-    if ($stmt_admin && $stmt_user) {
-        mysqli_stmt_bind_param($stmt_admin, "s", $_SESSION['email']);
+    if ($stmt_user) {
         mysqli_stmt_bind_param($stmt_user, "s", $_SESSION['email']);
-        if (mysqli_stmt_execute($stmt_admin)) {
-            $result_admin = mysqli_stmt_get_result($stmt_admin);
-            if ($row_admin = mysqli_fetch_assoc($result_admin)) {
-                $guestName = $row_admin['fullname'];
-                $contacts = $row_admin['phone'];
-            }
-            mysqli_stmt_close($stmt_admin);
-        } else {
-            echo "Error executing admin query: " . mysqli_error($conn);
-            exit;
-        }   
-
-        if (empty($guestName)) {
-            if (mysqli_stmt_execute($stmt_user)) {
-                $result_user = mysqli_stmt_get_result($stmt_user);
-                if ($row_user = mysqli_fetch_assoc($result_user)) {
-                    $guestName = $row_user['fullname'];
-                    $contacts = $row_user['phone'];
-                } else {
-                    echo "User not found.";
-                    exit;
-                }
+        if (mysqli_stmt_execute($stmt_user)) {
+            $result_user = mysqli_stmt_get_result($stmt_user);
+            if ($row_user = mysqli_fetch_assoc($result_user)) {
+                $guestName = $row_user['fullname'];
+                $contact = $row_user['phone'];
             } else {
-                echo "Error executing user query: " . mysqli_error($conn);
+                echo "User not found.";
                 exit;
             }
+        } else {
+            echo "Error executing user query: " . mysqli_error($conn);
+            exit;
         }
         mysqli_stmt_close($stmt_user);
     } else {
-        echo "Error preparing queries: " . mysqli_error($conn);
+        echo "Error preparing user query: " . mysqli_error($conn);
         exit;
     }
 } else {
@@ -252,13 +231,38 @@ if (isset($_SESSION['email'])) {
                     </ul>
                 </div>
                 <div class="lists">
+
                     <p><strong>Rooms Available</strong></p>
                     <ul>
-                        <?php foreach ($rooms as $roomType => $quantity): ?>
-                            <li>
-                                <?php echo $roomType . ": " . $quantity; ?>
-                            </li>
-                        <?php endforeach; ?>
+                        <?php
+                        $sql_room = "SELECT room_type, quantity, price FROM rooms WHERE hotel_id = ?";
+                        $stmt_room = mysqli_prepare($conn, $sql_room);
+
+                        if ($stmt_room) {
+                            mysqli_stmt_bind_param($stmt_room, "i", $hotel_id);
+
+                            if (mysqli_stmt_execute($stmt_room)) {
+                                $result_room = mysqli_stmt_get_result($stmt_room);
+
+                                while ($row = mysqli_fetch_assoc($result_room)) {
+                                    $roomType = $row['room_type'];
+                                    $quantity = $row['quantity'];
+                                    ?>
+                                    <li>
+                                        <?php echo ucfirst($roomType) . ": " . $quantity; ?>
+                                    </li>
+                                    <?php
+                                }
+                            } else {
+                                echo "Error executing statement: " . mysqli_stmt_error($stmt_room);
+                            }
+
+                            mysqli_stmt_close($stmt_room);
+                        } else {
+                            echo "Error preparing statement: " . mysqli_error($conn);
+                        }
+                        ?>
+
                     </ul>
                 </div>
             </div>
@@ -286,7 +290,7 @@ if (isset($_SESSION['email'])) {
                 <div class="reservation">
                     <input type="hidden" name="hotel_id" value="<?php echo $hotel_id; ?>">
                     <input type="hidden" name="fullname" value="<?php echo $guestName; ?>">
-                    <input type="hidden" name="contact" value="<?php echo $contacts; ?>">
+                    <input type="hidden" name="contact" value="<?php echo $contact; ?>">
                     <input type="hidden" name="email" value="<?php echo isset($userEmail) ? $userEmail : ''; ?>">
                     <label for="check-in" class="reservation--label">Check-in:</label>
                     <input type="date" name="check-in" id="check-in" min="<?php echo date('Y-m-d'); ?>"
@@ -395,6 +399,7 @@ if (isset($_SESSION['email'])) {
         var maxRooms = <?php echo json_encode($rooms); ?>[roomType];
 
         var selectRoom = document.getElementById('number-of-room');
+        selectRoom.innerHTML = ''; // Clear previous options
 
         for (var i = 1; i <= maxRooms; i++) {
             var option = document.createElement('option');

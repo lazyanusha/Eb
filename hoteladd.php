@@ -11,9 +11,6 @@ include 'connection.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard</title>
     <link rel="stylesheet" href="./css/dashboard.css">
-    <style>
-
-    </style>
 </head>
 
 <body>
@@ -203,8 +200,6 @@ include 'connection.php';
         function removeRoomField(element) {
             element.parentNode.remove();
         }
-
-
 
         // Function to preview selected image
         const imageUpload = document.getElementById('imageUpload');

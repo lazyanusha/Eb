@@ -10,28 +10,6 @@ if (!isset($_SESSION['email'])) {
 
 $loggedInEmail = $_SESSION['email'];
 
-if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["action"]) && $_POST["action"] == "cancelled" && isset($_POST["reservation_id"])) {
-    // Handle cancel action
-    $reservationId = $_POST["reservation_id"];
-
-    // Check if the reservation ID is not already canceled
-    if (!isset($_SESSION['canceled_reservations']) || !in_array($reservationId, $_SESSION['canceled_reservations'])) {
-        // Add the reservation ID to the session variable
-        $_SESSION['canceled_reservations'][] = $reservationId;
-
-        $cancelSql = "UPDATE reservations SET reservation_status = 'cancelled' WHERE reservation_id = ? AND email = ?";
-        $cancelStmt = $conn->prepare($cancelSql);
-        $cancelStmt->bind_param("is", $reservationId, $loggedInEmail);
-
-        if ($cancelStmt->execute()) {
-            echo "<script>alert('You have cancelled the reservation!!'); window.location='dashboard.php';</script>";
-
-        } else {
-            exit();
-        }
-    }
-}
-
 $sql = "SELECT r.*, h.hotel_name, h.hotel_address, r.reservation_status 
         FROM reservations r
         INNER JOIN hotels h ON r.hotel_id = h.hotel_id 
@@ -152,6 +130,7 @@ while ($row = $result->fetch_assoc()) {
                     <thead>
                         <tr>
                             <th rowspan="2">Booking id</th>
+                            <th rowspan="2">Date/Time</th>
                             <th colspan="4">Guests</th>
                             <th colspan="2">Date</th>
                             <th colspan="2">Room</th>
@@ -175,6 +154,7 @@ while ($row = $result->fetch_assoc()) {
                             <tr>
                                 <!-- Table data -->
                                 <td><?php echo $info['reservation_id']; ?></td>
+                                <td><?php echo $info['booking_date']; ?></td>
                                 <td><?php echo $info['guest_name']; ?></td>
                                 <td><?php echo $info['contact_information']; ?></td>
                                 <td><?php echo $info['email']; ?></td>
@@ -189,20 +169,24 @@ while ($row = $result->fetch_assoc()) {
                                     </a>
                                 </td>
                                 <td class="action">
-                                    <?php if ($info['reservation_status'] == 'confirmed' || $info['reservation_status'] == 'cancelled'): ?>
-                                        <button type="button" disabled>View</button>
-                                    <?php elseif ($info['reservation_status'] == 'pending'): ?>
-                                        <form class="cancel-form" action="" method="post">
+                                    <form action="bupdate.php" method="post">
+                                        <?php if ($info['reservation_status'] == 'confirmed' || $info['reservation_status'] == 'cancelled'): ?>
+                                            <input type="hidden" name="reservation_id"
+                                                value="<?php echo $info['reservation_id']; ?>">
+                                            <button type="submit">View</button>
+                                        </form>
+                                        <form action="bupdate.php" method="post">
+                                        <?php elseif ($info['reservation_status'] == 'pending'): ?>
                                             <input type="hidden" name="reservation_id"
                                                 value="<?php echo $info['reservation_id']; ?>">
                                             <input type="hidden" name="action" value="cancelled">
-                                            <a href="bupdate.php"><button type="submit">Update</button></a>
-                                            <button type="submit" class="button1"
+                                            <button type="submit">Update</button>
+                                            <button type="button" class="button1"
                                                 onclick="return confirm('Are you sure you want to cancel the reservation?')">Cancel</button>
-                                        </form>
-                                    <?php endif; ?>
-
+                                        <?php endif; ?>
+                                    </form>
                                 </td>
+
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -236,7 +220,7 @@ while ($row = $result->fetch_assoc()) {
         }
         $(document).ready(function () {
             $('.cancel-form').submit(function (e) {
-                e.preventDefault(); 
+                e.preventDefault();
                 var form = $(this);
                 var url = form.attr('action');
                 var formData = form.serialize(); // Serialize form data

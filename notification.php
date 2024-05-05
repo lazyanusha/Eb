@@ -66,6 +66,26 @@ if (isset($_SESSION['email'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Notifications</title>
     <link rel="stylesheet" href="./css/dashboard.css">
+    <style>
+        .table {
+            margin: 55px;
+            padding: 30px;
+
+        }
+
+        table,
+        tr,
+        td,
+        th {
+            border: 1px solid #8d69c0;
+            padding: 10px;
+        }
+
+        button {
+            padding: 10px 25px;
+            cursor: pointer;
+        }
+    </style>
 </head>
 
 <body>
@@ -82,7 +102,6 @@ if (isset($_SESSION['email'])) {
             </thead>
             <tbody>
                 <?php
-                // Fetch reservation status from the database
                 $sql_reservation = "SELECT reservation_status, booking_date FROM reservations WHERE email = ? ORDER BY booking_date DESC";
                 $stmt_reservation = mysqli_prepare($conn, $sql_reservation);
 
@@ -111,8 +130,9 @@ if (isset($_SESSION['email'])) {
                             echo '<tr>';
                             echo '<td>' . $serialNumber . '</td>';
                             echo '<td>' . $row_reservation['booking_date'] . '</td>';
-                            echo '<td>' . $notificationMessage . '</td>';
-                            echo '<td><button>Delete</button></td>';
+                            echo '<td>' . $notificationMessage . '</td>'; ?>
+                            <td><a href="bupdate.php?reservation_id=<?php echo $info['reservation_id']; ?>">View</a></td>
+                            <?php
                             echo '</tr>';
 
                             $serialNumber++; // Increment serial number

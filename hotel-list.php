@@ -3,7 +3,6 @@ include 'connection.php';
 
 if (isset($_POST['query'])) {
     $search_query = mysqli_real_escape_string($conn, $_POST['query']);
-
     $sql = "SELECT * FROM hotels WHERE hotel_name LIKE '%$search_query%' OR hotel_address LIKE '%$search_query%'";
 } else {
     $sql = "SELECT * FROM hotels";
@@ -14,36 +13,29 @@ $filtered_hotels = [];
 
 if ($result) {
     while ($row_hotel = mysqli_fetch_assoc($result)) {
+        $hotel_id = $row_hotel['hotel_id'];
+        // Count total rooms
+        $sql_total_rooms = "SELECT SUM(quantity) AS total_rooms FROM rooms WHERE hotel_id = $hotel_id";
+        $result_total_rooms = mysqli_query($conn, $sql_total_rooms);
+        $row_total_rooms = mysqli_fetch_assoc($result_total_rooms);
+        $row_hotel['total_rooms'] = $row_total_rooms['total_rooms'];
+
+        // Count available rooms
+        $sql_available_rooms = "SELECT SUM(quantity) AS available_rooms FROM rooms WHERE hotel_id = $hotel_id AND availability = 'available'";
+        $result_available_rooms = mysqli_query($conn, $sql_available_rooms);
+        $row_available_rooms = mysqli_fetch_assoc($result_available_rooms);
+        $row_hotel['available_rooms'] = $row_available_rooms['available_rooms'];
+
+        // Count inquired rooms
+        $sql_inquired_rooms = "SELECT SUM(room_number) AS inquired_rooms FROM reservations WHERE hotel_id = $hotel_id AND reservation_status = 'confirmed'";
+        $result_inquired_rooms = mysqli_query($conn, $sql_inquired_rooms);
+        $row_inquired_rooms = mysqli_fetch_assoc($result_inquired_rooms);
+        $row_hotel['inquired_rooms'] = $row_inquired_rooms['inquired_rooms'];
+
         $filtered_hotels[] = $row_hotel;
     }
 } else {
     echo "Error executing hotel query: " . mysqli_error($conn);
-}
-
-// Initialize variables
-$rooms = [];
-$total_rooms = 0;
-$available_rooms = 0;
-$inquired_rooms = 0;
-
-if (!isset($_POST['query'])) {
-    // Count total rooms
-    $sql_total_rooms = "SELECT COUNT(*) AS total_rooms FROM rooms";
-    $result_total_rooms = mysqli_query($conn, $sql_total_rooms);
-    $row_total_rooms = mysqli_fetch_assoc($result_total_rooms);
-    $total_rooms = $row_total_rooms['total_rooms'];
-
-    // Count available rooms
-    $sql_available_rooms = "SELECT COUNT(*) AS available_rooms FROM rooms WHERE availability = 'available'";
-    $result_available_rooms = mysqli_query($conn, $sql_available_rooms);
-    $row_available_rooms = mysqli_fetch_assoc($result_available_rooms);
-    $available_rooms = $row_available_rooms['available_rooms'];
-
-    // Count inquired rooms
-    $sql_inquired_rooms = "SELECT COUNT(*) AS inquired_rooms FROM rooms WHERE availability = 'inquired'";
-    $result_inquired_rooms = mysqli_query($conn, $sql_inquired_rooms);
-    $row_inquired_rooms = mysqli_fetch_assoc($result_inquired_rooms);
-    $inquired_rooms = $row_inquired_rooms['inquired_rooms'];
 }
 ?>
 
@@ -103,7 +95,6 @@ if (!isset($_POST['query'])) {
             <div class="heading">
                 <div class="part">
                     <h2>Hotel Details...</h2>
-                    <!-- <a href="dashboard.php"><button>Back</button></a> -->
                 </div>
                 <div class="search">
                     <form action="#" id="searchForm" onsubmit="return true;">
@@ -122,14 +113,14 @@ if (!isset($_POST['query'])) {
                             <th rowspan="2">Email</th>
                             <th rowspan="2">Contact</th>
                             <th rowspan="2">Location</th>
-                            <th colspan="4">Rooms</th>
+                            <th colspan="3">Rooms</th>
                             <th rowspan="2">Action</th>
                         </tr>
                         <tr>
-                            <th>Room type</th>
+                            <th>Total</th>
                             <th>Available</th>
                             <th>Booked</th>
-                            <th>Total</th>
+
                         </tr>
                     </thead>
                     <tbody>
@@ -144,15 +135,12 @@ if (!isset($_POST['query'])) {
                                 <td><?php echo $hotel['hotel_email']; ?></td>
                                 <td><?php echo $hotel['hotel_contact']; ?></td>
                                 <td><?php echo $hotel['hotel_address']; ?></td>
-                                
-                                <!-- Display rooms data -->
-                                <td><?php echo implode(", ", array_keys($rooms)); ?></td>
-                                <td><?php echo $total_rooms; ?></td>
-                                <td><?php echo $available_rooms; ?></td>
-                                <td><?php echo $inquired_rooms; ?></td>
+                                <td><?php echo $hotel['total_rooms']; ?></td>
+                                <td><?php echo $hotel['available_rooms']; ?></td>
+                                <td><?php echo $hotel['inquired_rooms']; ?></td>
 
                                 <td class="action">
-                                    <form action="update.php" method="post">
+                                    <form action="hupdate.php" method="post">
                                         <input type="hidden" name="hotel_id" value="<?php echo $hotel['hotel_id']; ?>">
                                         <button type="submit" name="update">Update</button>
                                     </form>

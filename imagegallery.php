@@ -15,7 +15,6 @@ function getFileSizeKB($file)
 {
     return $file['size'] / 1024;
 }
-
 function generateUniqueFilename($filename)
 {
     $extension = pathinfo($filename, PATHINFO_EXTENSION);
@@ -27,13 +26,11 @@ function generateUniqueFilename($filename)
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_FILES["image"])) {
-        // Check the number of uploaded files
-        $maxFiles = 20; // Maximum number of files allowed
+        $maxFiles = 20; 
         $fileCount = count($_FILES['image']['name']);
 
         if ($fileCount > $maxFiles) {
             echo "You can upload a maximum of $maxFiles files.";
-            // Handle error or stop further processing
             exit;
         }
 
@@ -49,7 +46,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $file_name = $images["name"][$i];
                 $file_tmp = $images["tmp_name"][$i];
 
-                // Check if the file is an image
                 if (!isImage($images['type'][$i])) {
                     $uploadErrors[] = "File '{$file_name}' is not an image.";
                     continue;

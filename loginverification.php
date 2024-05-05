@@ -6,7 +6,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $userLoginPassword = $_POST['password'];
 
-    // Check if the email exists in either 'users' or 'admins' table
     $query = "SELECT user_id, password, 'user' as type FROM users WHERE email = '$email' 
               UNION ALL 
               SELECT admin_id, password, 'admin' as type FROM admins WHERE email = '$email'";
