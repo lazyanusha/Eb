@@ -117,6 +117,7 @@ while ($row = $result->fetch_assoc()) {
         .action {
             display: flex;
             justify-content: space-around;
+            border: none;
         }
 
         form {
@@ -191,7 +192,7 @@ while ($row = $result->fetch_assoc()) {
                                     <?php if ($info['reservation_status'] == 'confirmed' || $info['reservation_status'] == 'cancelled'): ?>
                                         <button type="button" disabled>View</button>
                                     <?php elseif ($info['reservation_status'] == 'pending'): ?>
-                                        <form class="cancel-form" action="" method="post">
+                                        <form class="cancel-form" action="update.php" method="post">
                                             <input type="hidden" name="reservation_id"
                                                 value="<?php echo $info['reservation_id']; ?>">
                                             <input type="hidden" name="action" value="cancelled">
