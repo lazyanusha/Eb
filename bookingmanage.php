@@ -137,7 +137,7 @@ while ($row = mysqli_fetch_assoc($result)) {
 
                 <td>
                   <?php if ($info['reservation_status'] == 'confirmed' || $info['reservation_status'] == 'cancelled'): ?>
-                    <button type="button" disabled>View</button>
+                    <button type="button" disabled><?php echo $info['reservation_status']?></button>
                   <?php elseif ($info['reservation_status'] == 'pending'): ?>
                     <form action="reservation_update.php" method="post"
                       onsubmit="updateReservationStatus(this); return false;">

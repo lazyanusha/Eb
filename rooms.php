@@ -1,28 +1,69 @@
 <?php
 include 'connection.php';
-
-// Function to update room availability based on check-out dates
 function updateRoomAvailability($conn)
 {
     // Get current date
     $currentDate = date('Y-m-d');
 
-    // Retrieve reservations that have passed their check-out date
-    $sql_check_out = "SELECT room_number FROM reservations WHERE check_out_date <= '$currentDate' AND reservation_status = 'confirmed'";
-    $result_check_out = mysqli_query($conn, $sql_check_out);
+    $sql_reserved_count = "
+        SELECT room_type, SUM(room_number) AS reserved_count
+        FROM reservations
+        WHERE check_in_date >= '$currentDate' AND check_out_date >= '$currentDate' AND reservation_status = 'confirmed'
+        GROUP BY room_type
+    ";
+    $result_reserved_count = mysqli_query($conn, $sql_reserved_count);
 
-    if ($result_check_out) {
-        while ($row_check_out = mysqli_fetch_assoc($result_check_out)) {
-            $room_id = $row_check_out['room_number'];
-            $sql_update_availability = "UPDATE rooms SET availability = 'available' WHERE room_id = $room_id";
-            $result_update_availability = mysqli_query($conn, $sql_update_availability);
+    if ($result_reserved_count) {
+        // Update room availability based on the reserved count
+        while ($row_reserved_count = mysqli_fetch_assoc($result_reserved_count)) {
+            $room_type = $row_reserved_count['room_type'];
+            $reserved_count = $row_reserved_count['reserved_count'];
 
-            if (!$result_update_availability) {
-                echo "Error updating room availability: " . mysqli_error($conn);
+            // Get total room quantity for the current room type
+            $sql_room_quantity = "SELECT room_id, quantity, rooms_booked FROM rooms WHERE room_type = '$room_type'";
+            $result_room_quantity = mysqli_query($conn, $sql_room_quantity);
+
+            if ($result_room_quantity) {
+                while ($row_room_quantity = mysqli_fetch_assoc($result_room_quantity)) {
+                    $room_id = $row_room_quantity['room_id'];
+                    $room_quantity = $row_room_quantity['quantity'];
+
+                    // Calculate available rooms ensuring it does not go below zero
+                    $available_quantity = max(0, $room_quantity - $reserved_count);
+
+                    // Determine availability status based on the room quantity
+                    $availability = ($available_quantity <= 0) ? 'booked' : 'available';
+
+                    // Update the rooms table
+                    $sql_update_availability = "
+                        UPDATE rooms 
+                        SET availability = '$availability', rooms_booked = $reserved_count 
+                        WHERE room_id = $room_id
+                    ";
+                    $result_update_availability = mysqli_query($conn, $sql_update_availability);
+
+                    if (!$result_update_availability) {
+                        echo "Error updating room availability: " . mysqli_error($conn);
+                    }
+                }
             }
         }
     } else {
-        echo "Error retrieving check-out dates: " . mysqli_error($conn);
+        echo "Error retrieving reserved count: " . mysqli_error($conn);
+    }
+
+    // Free up rooms that have passed their checkout date
+    $sql_free_rooms = "
+        UPDATE rooms r
+        LEFT JOIN reservations res
+        ON r.room_type = res.room_type AND res.check_out_date < '$currentDate' AND res.reservation_status = 'confirmed'
+        SET r.rooms_booked = r.rooms_booked - res.room_number
+        WHERE res.reservation_id IS NOT NULL
+    ";
+    $result_free_rooms = mysqli_query($conn, $sql_free_rooms);
+
+    if (!$result_free_rooms) {
+        echo "Error freeing rooms: " . mysqli_error($conn);
     }
 }
 
@@ -42,7 +83,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['submit'])) {
     }
 }
 
-$sql = "SELECT * FROM rooms ORDER BY CASE WHEN availability = 'available' THEN 0 ELSE 1 END, room_id ASC";
+// Query to get rooms with the reserved count
+$sql = "
+    SELECT 
+        rooms.*, 
+        rooms.quantity - rooms.rooms_booked AS available_quantity 
+    FROM rooms 
+    ORDER BY CASE WHEN availability = 'available' THEN 0 ELSE 1 END, room_id ASC
+";
 $result = mysqli_query($conn, $sql);
 $rooms = [];
 
@@ -63,7 +111,7 @@ mysqli_close($conn);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Room Details </title>
+    <title>Room Details</title>
     <link rel="stylesheet" href="./css/dashboard.css">
     <style>
         .second--section {
@@ -78,11 +126,6 @@ mysqli_close($conn);
             border-radius: 5px;
             outline: none;
             cursor: pointer;
-        }
-
-        /* Style for selected option */
-        #status option:checked {
-            background-color: ;
         }
 
         button {
@@ -127,7 +170,7 @@ mysqli_close($conn);
         <!-- reservation details -->
         <div class="second--section">
             <div class="part">
-                <h2>Room Details.!!</h2>
+                <h2>Room Details</h2>
                 <a href="dashboard.php"><button>Back</button></a>
             </div>
             <div class="more--details">
@@ -138,6 +181,8 @@ mysqli_close($conn);
                             <th>Hotel Id</th>
                             <th>Room Type</th>
                             <th>Room Quantity</th>
+                            <th>Reserved Count</th>
+                            <th>Available Quantity</th>
                             <th>Status</th>
                         </tr>
                     </thead>
@@ -145,18 +190,17 @@ mysqli_close($conn);
                         <?php foreach ($rooms as $row): ?>
                             <tr>
                                 <td><?php echo $row['room_id']; ?></td>
-                                <td>
-                                    <?php echo $row['hotel_id']; ?>
-                                </td>
+                                <td><?php echo $row['hotel_id']; ?></td>
                                 <td><?php echo $row['room_type']; ?></td>
                                 <td><?php echo $row['quantity']; ?></td>
+                                <td><?php echo $row['rooms_booked']; ?></td>
+                                <td><?php echo $row['available_quantity']; ?></td>
                                 <td>
                                     <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
                                         <input type="hidden" name="room_id" value="<?php echo $row['room_id']; ?>">
                                         <select name="availability">
                                             <option value="available" <?php if ($row['availability'] == "available")
-                                                echo 'selected'; ?>>Available
-                                            </option>
+                                                echo 'selected'; ?>>Available</option>
                                             <option value="booked" <?php if ($row['availability'] == "booked")
                                                 echo 'selected'; ?>>Booked</option>
                                             <option value="not in service" <?php if ($row['availability'] == "not in service")
@@ -166,40 +210,14 @@ mysqli_close($conn);
                                     </form>
                                 </td>
                             </tr>
-
                         <?php endforeach; ?>
                     </tbody>
+
                 </table>
             </div>
         </div>
-
     </div>
     <div class="footer"></div>
-
-    <script>
-        function searchTable() {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("searchInput");
-            filter = input.value.toUpperCase();
-
-            table = document.getElementById("myTable");
-            tr = table.getElementsByTagName("tr");
-
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[2];
-
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
-        }
-    </script>
-
 </body>
 
 </html>

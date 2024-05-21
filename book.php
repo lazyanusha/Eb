@@ -74,7 +74,7 @@ if (isset($_GET['hotel_id'])) {
     } else {
         echo "Error preparing rooms query: " . mysqli_error($conn);
     }
-
+    
     $sql_images = "SELECT image_name FROM hotel_images WHERE hotel_id = ?";
     $stmt_images = mysqli_prepare($conn, $sql_images);
     if ($stmt_images) {
@@ -95,6 +95,7 @@ if (isset($_GET['hotel_id'])) {
 } else {
     echo "Hotel ID not found in query string.";
 }
+
 
 if (isset($_SESSION['email'])) {
     $userEmail = $_SESSION['email'];
@@ -394,7 +395,7 @@ if (isset($_SESSION['email'])) {
 
         var totalPrice = pricePerNight * diffDays * numberOfRooms;
 
-        priceDisplay.value = '$' + totalPrice.toFixed(2);
+        priceDisplay.value = 'Rs' + totalPrice.toFixed(2);
         priceInput.value = totalPrice.toFixed(2);
     }
 
