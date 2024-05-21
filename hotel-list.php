@@ -92,16 +92,9 @@ if ($result) {
 
         <!-- reservation details -->
         <div class="second--section">
-            <div class="heading">
-                <div class="part">
-                    <h2>Hotel Details...</h2>
-                </div>
-                <div class="search">
-                    <form action="#" id="searchForm" onsubmit="return true;">
-                        <input type="search" placeholder="search here" name="search" />
-                        <button type="submit" onclick="searchTable()">search</button>
-                    </form>
-                </div>
+        <div class="part">
+                <h2>Hotel Lists</h2>
+                <a href="dashboard.php"><button>Back</button></a>
             </div>
             <div class="more--details">
 

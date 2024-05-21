@@ -161,6 +161,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <?php include 'sidebar.php'; ?>
         <!-- Main Content Section -->
         <div class="second--section">
+        <div class="part">
+                <h2>Image Gallery</h2>
+                <a href="dashboard.php"><button>Back</button></a>
+            </div>
             <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post"
                 enctype="multipart/form-data">
                 <div class="divimages">

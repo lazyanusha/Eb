@@ -189,18 +189,22 @@ if (isset($_SESSION['email'])) {
 <body>
     <div class="image">
         <div class="carousel-container">
-            <div class="carousel">
-                <?php foreach ($images as $image): ?>
-                    <div>
-                        <a href="<?php echo $image; ?>">
-                            <img src="<?php echo $image; ?>" alt="Hotel Image" loading="lazy">
-                        </a>
-                    </div>
-                <?php endforeach; ?>
-
-            </div>
+            <?php if (!empty($images)): ?>
+                <div class="carousel">
+                    <?php foreach ($images as $image): ?>
+                        <div>
+                            <a href="<?php echo $image; ?>">
+                                <img src="<?php echo $image; ?>" alt="Hotel Image" loading="lazy">
+                            </a>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            <?php else: ?>
+                <img src="./images/sunset-pool.jpg" alt="Default Image" loading="lazy">
+            <?php endif; ?>
         </div>
     </div>
+
     <div class="section">
         <div class="hotel--info">
             <h2>
@@ -306,7 +310,7 @@ if (isset($_SESSION['email'])) {
                         <option value="" disabled selected>Select type of room</option>
                         <?php foreach ($rooms as $roomType => $quantity): ?>
                             <option value="<?php echo $roomType; ?>" data-price="<?php echo $prices[$roomType]; ?>">
-                                <?php echo ucfirst($roomType); ?> Room - $<?php echo $prices[$roomType]; ?> per night
+                                <?php echo ucfirst($roomType); ?> Room - Rs<?php echo $prices[$roomType]; ?> per night
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -319,7 +323,7 @@ if (isset($_SESSION['email'])) {
                         <option value="triple">Triple Bed</option>
                     </select>
 
-                    <label for="number-of-room" class="reservation--label">Room Quantity:</label>
+                    <label for="number-of-room" class="reservation--label">Room Number:</label>
                     <select class="reservation--info" name="number-of-room" id="number-of-room"
                         onchange="updatePriceAndOptions()">
                         <option value="" disabled selected>Select room quantity</option>
@@ -327,10 +331,11 @@ if (isset($_SESSION['email'])) {
 
                     <label for="guest">Guests:</label><br><br>
                     <label for="children" class="reservation--label">Children:</label>
-                    <input type="number" name="children" id="children">
+                    <input type="number" name="children" id="children" min="0">
 
                     <label for="adult" class="reservation--label">Adult:</label>
-                    <input type="number" name="adult" id="adult">
+                    <input type="number" name="adult" id="adult" min="0">
+
 
                     <label for="room-price" class="reservation--label">Price per night:</label>
                     <input type="text" name="total-price" id="room-price" class="reservation--info" readonly>
@@ -434,6 +439,12 @@ if (isset($_SESSION['email'])) {
 
         return year + '-' + month + '-' + day;
     }
+    window.onload = function () {
+        if (!sessionStorage.getItem('pageReloaded')) {
+            sessionStorage.setItem('pageReloaded', 'true');
+            location.reload();
+        }
+    };
 
 </script>
 

@@ -146,7 +146,6 @@ while ($row = $result->fetch_assoc()) {
                             <th>Check-out</th>
                             <th>Room type</th>
                             <th>Room quantity</th>
-
                         </tr>
                     </thead>
                     <tbody>
@@ -169,22 +168,25 @@ while ($row = $result->fetch_assoc()) {
                                     </a>
                                 </td>
                                 <td class="action">
-                                    <form action="bupdate.php" method="post">
-                                        <?php if ($info['reservation_status'] == 'confirmed' || $info['reservation_status'] == 'cancelled'): ?>
+                             
+                                    <?php if ($info['reservation_status'] == 'confirmed'|| $info['reservation_status'] == 'cancelled' || $info['reservation_status'] == 'declined'): ?>
+                                        <a href="bupdate.php?reservation_id=<?php echo $info['reservation_id']; ?>">
+                                            <button type="button" class="view-btn">View</button>
+                                        </a>
+                                    <?php else: ?>
+                                        <form action="bupdate.php" method="POST">
                                             <input type="hidden" name="reservation_id"
                                                 value="<?php echo $info['reservation_id']; ?>">
-                                            <button type="submit">View</button>
+                                            <button type="submit" name="update">Update</button>
                                         </form>
-                                        <form action="bupdate.php" method="post">
-                                        <?php elseif ($info['reservation_status'] == 'pending'): ?>
+                                        <form action="cancel.php" method="POST" >
                                             <input type="hidden" name="reservation_id"
                                                 value="<?php echo $info['reservation_id']; ?>">
-                                            <input type="hidden" name="action" value="cancelled">
-                                            <button type="submit">Update</button>
-                                            <button type="button" class="button1"
-                                                onclick="return confirm('Are you sure you want to cancel the reservation?')">Cancel</button>
-                                        <?php endif; ?>
-                                    </form>
+                                            <button type="submit" name="declined" class="button1">Cancel</button>
+                                        </form>
+                                    <?php endif; ?>
+                           
+
                                 </td>
 
                             </tr>
@@ -194,46 +196,6 @@ while ($row = $result->fetch_assoc()) {
             </div>
         </div>
     </div>
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script>
-        function searchTable() {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("searchInput");
-            filter = input.value.toUpperCase();
-
-            table = document.getElementById("myTable");
-            tr = table.getElementsByTagName("tr");
-
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[2];
-
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
-        }
-        $(document).ready(function () {
-            $('.cancel-form').submit(function (e) {
-                e.preventDefault();
-                var form = $(this);
-                var url = form.attr('action');
-                var formData = form.serialize(); // Serialize form data
-
-                $.post(url, formData, function (response) {
-                    console.log(response);
-
-                    location.reload();
-                });
-            });
-        });
-
-    </script>
 
 </body>
 

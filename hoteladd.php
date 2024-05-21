@@ -108,7 +108,6 @@ include 'connection.php';
     <div class="footer">
     </div>
 
-    <!-- JavaScript Code Section -->
     <script>
         // Add event listeners to format textarea input as a bulleted list
         const textarea = document.getElementById('myTextarea');

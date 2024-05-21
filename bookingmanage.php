@@ -89,18 +89,10 @@ while ($row = mysqli_fetch_assoc($result)) {
 
     <!-- reservation details -->
     <div class="second--section">
-      <div class="heading">
-        <div class="part">
-          <h2>Booking Details...</h2>
-          <!-- <a href="dashboard.php"><button>Back</button></a> -->
-        </div>
-        <div class="search">
-          <form action="#" id="searchForm" onsubmit="return true;">
-          <input type="search" placeholder="search here" id="searchInput" />
-            <button type="submit" onclick="searchTable()">search</button>
-          </form>
-        </div>
-      </div>
+    <div class="part">
+                <h2>Booking Details.</h2>
+                <a href="dashboard.php"><button>Back</button></a>
+            </div>
       <div class="more--details">
 
         <table border="1px" style="border-collapse: collapse; width: 100%">

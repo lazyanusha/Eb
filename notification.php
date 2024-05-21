@@ -86,18 +86,21 @@ if (isset($_SESSION['email'])) {
             cursor: pointer;
         }
     </style>
-</head>
+</head> 
 
 <body>
     <div class="table">
-        <p>Notifications</p>
+        <div class="part">
+            <h2> Notifications!!</h2>
+            <a href="dashboard.php"><button>Back</button></a>
+        </div>
         <table>
             <thead>
                 <tr>
                     <th>S.no</th>
                     <th>Date/Time</th>
                     <th>Message</th>
-                    <th>Action</th>
+                    <!-- <th>Action</th> -->
                 </tr>
             </thead>
             <tbody>
@@ -131,7 +134,7 @@ if (isset($_SESSION['email'])) {
                             echo '<td>' . $serialNumber . '</td>';
                             echo '<td>' . $row_reservation['booking_date'] . '</td>';
                             echo '<td>' . $notificationMessage . '</td>'; ?>
-                            <td><a href="bupdate.php?reservation_id=<?php echo $info['reservation_id']; ?>">View</a></td>
+                            <!-- <td><a href="bupdate.php?reservation_id=<?php echo $info['reservation_id']; ?>">View</a></td> -->
                             <?php
                             echo '</tr>';
 

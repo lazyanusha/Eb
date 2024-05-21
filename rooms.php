@@ -2,7 +2,8 @@
 include 'connection.php';
 
 // Function to update room availability based on check-out dates
-function updateRoomAvailability($conn) {
+function updateRoomAvailability($conn)
+{
     // Get current date
     $currentDate = date('Y-m-d');
 
@@ -125,17 +126,9 @@ mysqli_close($conn);
 
         <!-- reservation details -->
         <div class="second--section">
-            <div class="heading">
-                <div class="part">
-                    <h2>Room Details!!</h2>
-                    <!-- <a href="dashboard.php"><button>Back</button></a> -->
-                </div>
-                <div class="search">
-                    <form action="#" id="searchForm" onsubmit="return true;">
-                        <input type="search" id="searchInput" placeholder="search here" name="search" />
-                        <button type="submit" onclick="searchTable()">search</button>
-                    </form>
-                </div>
+            <div class="part">
+                <h2>Room Details.!!</h2>
+                <a href="dashboard.php"><button>Back</button></a>
             </div>
             <div class="more--details">
                 <table border="1px" style="border-collapse: collapse; width: 100%">
