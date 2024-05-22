@@ -10,15 +10,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $hotelEmail = $_POST['hotelEmail'];
     $hotelContact = $_POST['hotelContact'];
     $description = $_POST['description'];
-    $ratings = $_POST['ratings'];
 
     if (isset($_POST['hotel_id'])) {
         $id = $_POST['hotel_id'];
 
         // Update query
-        $sql_update = "UPDATE hotels SET hotel_name=?, hotel_address=?, hotel_email=?, hotel_contact=?, description=?, ratings=? WHERE hotel_id=?";
+        $sql_update = "UPDATE hotels SET hotel_name=?, hotel_address=?, hotel_email=?, hotel_contact=?, description=? WHERE hotel_id=?";
         $stmt_update = $conn->prepare($sql_update);
-        $stmt_update->bind_param("ssssssi", $hotelName, $hotelLocation, $hotelEmail, $hotelContact, $description, $ratings, $id);
+        $stmt_update->bind_param("ssssssi", $hotelName, $hotelLocation, $hotelEmail, $hotelContact, $description, $id);
 
         // Execute the update query
         if ($stmt_update->execute()) {

@@ -16,12 +16,12 @@ $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $booked_rooms = $row['booked_rooms'];
 
-$sql = "SELECT sum(room_number) AS cancelled_rooms FROM reservations WHERE reservation_status = 'cancelled'";
+$sql = "SELECT sum(room_number) AS cancelled_rooms FROM reservations WHERE reservation_status = 'cancelled' or reservation_status = 'declined'";
 $result = mysqli_query($conn, $sql);
 $row = mysqli_fetch_assoc($result);
 $cancelled_rooms = $row['cancelled_rooms'];
 
-$available_rooms = $total_rooms- $booked_rooms + $cancelled_rooms;
+$available_rooms = $total_rooms - $booked_rooms ;
 
 $sql = "SELECT COUNT(hotel_id) AS total_hotels FROM hotels";
 $result = mysqli_query($conn, $sql);

@@ -88,11 +88,6 @@ include 'connection.php';
                         <input type="file" id="imageUpload" name="image" accept="image/*">
                     </div>
 
-                    <div class="image-preview" id="imagePreview"></div>
-                    <div class="elements">
-                        <label for="hotelContact">Ratings:</label><br>
-                        <input type="number" name="ratings" required>
-                    </div>
                     <hr>
                     <div class="submit">
                         <button type="submit">Save</button>
@@ -179,10 +174,21 @@ include 'connection.php';
             <label for="room-type">Room Type:</label>
             <select class="reservation--info" name="room-type[]" id="room-type">
             <option value="" disabled selected>Select type of room</option>
-            <option value="normal">Normal Room</option>
-            <option value="luxury">Luxury Room</option>
-            <option value="deluxe">Deluxe Room</option>
-            <option value="king">King Size</option>
+        <option value="normal">Normal Room</option>
+        <option value="luxury">Luxury Room</option>
+        <option value="deluxe">Deluxe Room</option>
+        <option value="king">King Size</option>
+        <option value="suite">Suite</option>
+         <option value="penthouse">Penthouse</option>
+        <option value="studio">Studio</option>
+        <option value="villa">Villa</option>
+        <option value="chalet">Chalet</option>
+        <option value="executive">Executive Room</option>
+        <option value="ocean-view">Ocean View Room</option>
+        <option value="garden-view">Garden View Room</option>
+        <option value="pool-side">Pool Side Room</option>
+        <option value="family">Family Room</option>
+        
           </select>
             <label for="room-quantity">Quantity:</label>
             <input type="number" name="room-quantity[]" value="0" min="0">

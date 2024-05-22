@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (
             ($row['type'] === 'user' && password_verify($userLoginPassword, $storedPassword)) ||
-            ($row['type'] === 'admin' && $userLoginPassword === $storedPassword)
+            ($row['type'] === 'admin' && password_verify($userLoginPassword, $storedPassword))
         ) {
             $_SESSION['email'] = $email;
             if ($row['type'] === 'admin') {

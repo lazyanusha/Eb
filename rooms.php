@@ -1,55 +1,31 @@
 <?php
 include 'connection.php';
+
 function updateRoomAvailability($conn)
 {
     // Get current date
     $currentDate = date('Y-m-d');
 
-    $sql_reserved_count = "
-        SELECT room_type, SUM(room_number) AS reserved_count
+    // Update room availability based on the reserved count from reservations table
+    $sql_update_availability = "
+    UPDATE rooms r
+    LEFT JOIN (
+        SELECT hotel_id, room_type, SUM(room_number) AS reserved_count
         FROM reservations
-        WHERE check_in_date >= '$currentDate' AND check_out_date >= '$currentDate' AND reservation_status = 'confirmed'
-        GROUP BY room_type
-    ";
-    $result_reserved_count = mysqli_query($conn, $sql_reserved_count);
+        WHERE check_in_date >= '$currentDate' AND check_out_date >= check_in_date AND reservation_status = 'confirmed'
+        GROUP BY hotel_id, room_type
+    ) res ON r.room_type = res.room_type AND r.hotel_id = res.hotel_id
+    SET r.availability = CASE
+        WHEN res.reserved_count IS NULL THEN 'available'
+        ELSE 'booked'
+    END,
+    r.rooms_booked = COALESCE(res.reserved_count, 0)
+";
 
-    if ($result_reserved_count) {
-        // Update room availability based on the reserved count
-        while ($row_reserved_count = mysqli_fetch_assoc($result_reserved_count)) {
-            $room_type = $row_reserved_count['room_type'];
-            $reserved_count = $row_reserved_count['reserved_count'];
+    $result_update_availability = mysqli_query($conn, $sql_update_availability);
 
-            // Get total room quantity for the current room type
-            $sql_room_quantity = "SELECT room_id, quantity, rooms_booked FROM rooms WHERE room_type = '$room_type'";
-            $result_room_quantity = mysqli_query($conn, $sql_room_quantity);
-
-            if ($result_room_quantity) {
-                while ($row_room_quantity = mysqli_fetch_assoc($result_room_quantity)) {
-                    $room_id = $row_room_quantity['room_id'];
-                    $room_quantity = $row_room_quantity['quantity'];
-
-                    // Calculate available rooms ensuring it does not go below zero
-                    $available_quantity = max(0, $room_quantity - $reserved_count);
-
-                    // Determine availability status based on the room quantity
-                    $availability = ($available_quantity <= 0) ? 'booked' : 'available';
-
-                    // Update the rooms table
-                    $sql_update_availability = "
-                        UPDATE rooms 
-                        SET availability = '$availability', rooms_booked = $reserved_count 
-                        WHERE room_id = $room_id
-                    ";
-                    $result_update_availability = mysqli_query($conn, $sql_update_availability);
-
-                    if (!$result_update_availability) {
-                        echo "Error updating room availability: " . mysqli_error($conn);
-                    }
-                }
-            }
-        }
-    } else {
-        echo "Error retrieving reserved count: " . mysqli_error($conn);
+    if (!$result_update_availability) {
+        echo "Error updating room availability: " . mysqli_error($conn);
     }
 
     // Free up rooms that have passed their checkout date

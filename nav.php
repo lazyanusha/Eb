@@ -1,48 +1,48 @@
 <?php
 include 'connection.php';
-
-if (!isset($_SESSION['email'])) {
-    header("Location: login.php");
-    exit();
+// session_start();
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-// Retrieve logged-in user's email
-$loggedInEmail = $_SESSION['email'];
 
-// Check if the logged-in user is an admin or a regular user
-$sql_admin = "SELECT fullname, email, images FROM admins WHERE email = ?";
-$sql_user = "SELECT fullname, email, images FROM users WHERE email = ?";
-$stmt_admin = mysqli_prepare($conn, $sql_admin);
-$stmt_user = mysqli_prepare($conn, $sql_user);
+$loggedInEmail = isset($_SESSION['email']) ? $_SESSION['email'] : null;
+$guestName = '';
+$profileImagePath = '';
 
-if ($stmt_admin && $stmt_user) {
-    mysqli_stmt_bind_param($stmt_admin, "s", $loggedInEmail);
-    mysqli_stmt_bind_param($stmt_user, "s", $loggedInEmail);
+// If user is logged in, retrieve user details
+if ($loggedInEmail) {
+    // Prepare SQL statements for checking admin and regular user status
+    $sql_admin = "SELECT fullname, email, images FROM admins WHERE email = ?";
+    $sql_user = "SELECT fullname, email, images FROM users WHERE email = ?";
+    $stmt_admin = mysqli_prepare($conn, $sql_admin);
+    $stmt_user = mysqli_prepare($conn, $sql_user);
 
-    if (mysqli_stmt_execute($stmt_admin)) {
+    if ($stmt_admin && $stmt_user) {
+        mysqli_stmt_bind_param($stmt_admin, "s", $loggedInEmail);
+        mysqli_stmt_bind_param($stmt_user, "s", $loggedInEmail);
+
+        mysqli_stmt_execute($stmt_admin);
         $result_admin = mysqli_stmt_get_result($stmt_admin);
+
         if ($row_admin = mysqli_fetch_assoc($result_admin)) {
             $guestName = $row_admin['fullname'];
-            $logEmail = $row_admin['email'];
-            $profileImagePath = $row_admin['images']; // Set profile image path
+            $profileImagePath = $row_admin['images'];
         } else {
-            if (mysqli_stmt_execute($stmt_user)) {
-                $result_user = mysqli_stmt_get_result($stmt_user);
-                if ($row_user = mysqli_fetch_assoc($result_user)) {
-                    $guestName = $row_user['fullname'];
-                    $logEmail = $row_user['email'];
-                    $profileImagePath = $row_user['images']; // Set profile image path
-                }
+            mysqli_stmt_execute($stmt_user);
+            $result_user = mysqli_stmt_get_result($stmt_user);
+
+            if ($row_user = mysqli_fetch_assoc($result_user)) {
+                $guestName = $row_user['fullname'];
+                $profileImagePath = $row_user['images'];
             }
         }
         mysqli_stmt_close($stmt_admin);
+        mysqli_stmt_close($stmt_user);  
     } else {
-        echo "Error executing admin query: " . mysqli_error($conn);
-        exit;
+        echo "Error: Unable to prepare SQL statements.";
+        exit();
     }
-} else {
-    echo "Error: Unable to prepare SQL statements.";
-    exit;
 }
 
 // Function to generate profile picture initials
@@ -59,16 +59,15 @@ function generateProfilePicture($fullname)
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
     <link rel="stylesheet" href="./css/home.css">
 </head>
 
 <body>
     <nav>
         <div class="navigation_bar">
-
             <div class="logo">
                 <a href="landing.php"><img src="./images/logo3.png" alt="logo"></a>
             </div>
@@ -81,20 +80,20 @@ function generateProfilePicture($fullname)
                 </ul>
             </div>
             <div class="admin--profile">
-                <?php if (isset($logEmail)): ?>
+                <?php if ($loggedInEmail): ?>
                 <div class="dropdown" onclick="toggleDropdown()">
-                    <p><?php echo $logEmail; ?></p>
+                    <p><?php echo htmlspecialchars($loggedInEmail); ?></p>
                     <?php if (!empty($profileImagePath) && file_exists($profileImagePath)): ?>
-                    <img src="<?php echo $profileImagePath; ?>" alt="Profile Picture">
+                    <img src="<?php echo htmlspecialchars($profileImagePath); ?>" alt="Profile Picture">
                     <?php else: ?>
-                    <div class="default-profile-image"><?php echo generateProfilePicture($guestName); ?></div>
+                    <div class="default-profile-image"><?php echo htmlspecialchars(generateProfilePicture($guestName)); ?></div>
                     <?php endif; ?>
                     <div class="drop">
                         <div class="dropdown-content">
                             <a href="ubooking.php">Bookings</a>
                             <a href="notification.php">Notifications</a>
                             <a href="update.php">Update Profile</a>
-                            <a href="logout.php" onclick="confirmLogout()">Log Out</a>
+                            <a href="logout.php" onclick="confirmLogout(event)">Log Out</a>
                         </div>
                     </div>
                 </div>
@@ -103,15 +102,13 @@ function generateProfilePicture($fullname)
                 <a href="signup.php">Sign Up</a>
                 <?php endif; ?>
             </div>
-
         </div>
     </nav>
 
     <script>
-        function confirmLogout() {
-            var logout = confirm("Are you sure you want to logout?");
-            if (logout) {
-                window.location.href = "logout.php";
+        function confirmLogout(event) {
+            if (!confirm("Are you sure you want to logout?")) {
+                event.preventDefault();
             }
         }
 
@@ -119,9 +116,7 @@ function generateProfilePicture($fullname)
             var dropdown = document.querySelector('.dropdown');
             dropdown.classList.toggle('clicked');
         }
-        
     </script>
-
 </body>
 
 </html>

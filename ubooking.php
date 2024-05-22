@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() === PHP_SESSION_NONE) {
+  session_start();
+}
 
 include 'connection.php';
 
@@ -168,25 +170,16 @@ while ($row = $result->fetch_assoc()) {
                                     </a>
                                 </td>
                                 <td class="action">
-                             
-                                    <?php if ($info['reservation_status'] == 'confirmed'|| $info['reservation_status'] == 'cancelled' || $info['reservation_status'] == 'declined'): ?>
-                                        <a href="bupdate.php?reservation_id=<?php echo $info['reservation_id']; ?>">
-                                            <button type="button" class="view-btn">View</button>
-                                        </a>
+
+                                    <?php if ($info['reservation_status'] == 'confirmed' || $info['reservation_status'] == 'cancelled' || $info['reservation_status'] == 'declined'): ?>
+                                        <button type="button" disabled><?php echo $info['reservation_status'] ?></button>
                                     <?php else: ?>
-                                        <form action="bupdate.php" method="POST">
-                                            <input type="hidden" name="reservation_id"
-                                                value="<?php echo $info['reservation_id']; ?>">
-                                            <button type="submit" name="update">Update</button>
-                                        </form>
-                                        <form action="cancel.php" method="POST" >
+                                        <form action="cancel.php" method="POST">
                                             <input type="hidden" name="reservation_id"
                                                 value="<?php echo $info['reservation_id']; ?>">
                                             <button type="submit" name="declined" class="button1">Cancel</button>
                                         </form>
                                     <?php endif; ?>
-                           
-
                                 </td>
 
                             </tr>

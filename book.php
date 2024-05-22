@@ -324,7 +324,7 @@ if (isset($_SESSION['email'])) {
                         <option value="triple">Triple Bed</option>
                     </select>
 
-                    <label for="number-of-room" class="reservation--label">Room Number:</label>
+                    <label for="number-of-room" class="reservation--label">Room Quantity:</label>
                     <select class="reservation--info" name="number-of-room" id="number-of-room"
                         onchange="updatePriceAndOptions()">
                         <option value="" disabled selected>Select room quantity</option>
@@ -332,7 +332,7 @@ if (isset($_SESSION['email'])) {
 
                     <label for="guest">Guests:</label><br><br>
                     <label for="children" class="reservation--label">Children:</label>
-                    <input type="number" name="children" id="children" min="0">
+                    <input type="number" name="children" id="children" min="0" value="0">
 
                     <label for="adult" class="reservation--label">Adult:</label>
                     <input type="number" name="adult" id="adult" min="0">
@@ -395,8 +395,15 @@ if (isset($_SESSION['email'])) {
 
         var totalPrice = pricePerNight * diffDays * numberOfRooms;
 
+        if (!isNaN(totalPrice)) {
+        
         priceDisplay.value = 'Rs' + totalPrice.toFixed(2);
         priceInput.value = totalPrice.toFixed(2);
+    } else {
+        console.error('Invalid totalPrice:', totalPrice);
+        priceDisplay.value = '0';
+        priceInput.value = '0';
+    }
     }
 
     // Function to update room numbers based on the selected room type

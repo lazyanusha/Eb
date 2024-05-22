@@ -1,7 +1,7 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+// if (session_status() === PHP_SESSION_NONE) {
+//     session_start();
+// }
 
 include 'connection.php';
 include 'nav.php';
@@ -35,13 +35,17 @@ if (isset($_POST['query'])) {
     <link rel="stylesheet" href="./css/home.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
-        button {
-            color: #343434;
+        form button {
             font-size: 14px;
             letter-spacing: 1px;
             margin-top: -10px;
             cursor: pointer;
+            padding: 10px 20px;
+            align-self: center;
+            border: none;
+            border-radius: 10px;
         }
+       
     </style>
 </head>
 
@@ -72,14 +76,14 @@ if (isset($_POST['query'])) {
                             <p class="card--details">
                                 <?php echo $hotel['hotel_address']; ?>
                             </p>
-                            <div class="stars">
+                            <!-- <div class="stars">
                                 <?php
                                 $ratings = $hotel['ratings'];
                                 for ($i = 0; $i < $ratings; $i++) {
                                     echo '<i class="fas fa-star"></i>';
                                 }
                                 ?>
-                            </div>
+                            </div> -->
                             <?php if (isset($_SESSION['email'])): ?>
                                 <a href="book.php?hotel_id=<?php echo $hotel['hotel_id']; ?>" class="button">Make
                                     Reservation</a>

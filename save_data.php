@@ -12,7 +12,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $hotelEmail = $_POST['hotelEmail'];
     $hotelContact = $_POST['hotelContact'];
     $description = $_POST['description'];
-    $ratings = $_POST['ratings'];
 
     // Check if image file is uploaded
     if (isset($_FILES['image'])) {
@@ -22,10 +21,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare and execute SQL statement for hotel insertion
-    $sql = "INSERT INTO hotels (hotel_name, hotel_email, hotel_address, hotel_contact, description, photos, ratings) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO hotels (hotel_name, hotel_email, hotel_address, hotel_contact, description, photos) 
+            VALUES (?, ?, ?, ?, ?, ?)";
     $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "ssssssi", $hotelName, $hotelEmail, $hotelLocation, $hotelContact, $description, $file_name, $ratings);
+    mysqli_stmt_bind_param($stmt, "ssssss", $hotelName, $hotelEmail, $hotelLocation, $hotelContact, $description, $file_name);
 
     if (mysqli_stmt_execute($stmt)) {
         // Retrieve the last inserted hotel ID

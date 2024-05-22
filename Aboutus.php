@@ -1,7 +1,7 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-  session_start();
-}
+// if (session_status() === PHP_SESSION_NONE) {
+//   session_start();
+// }
 include 'nav.php';
 $backgroundImagePath = "./images/sunset-pool.jpg";
 ?>
@@ -37,7 +37,7 @@ $backgroundImagePath = "./images/sunset-pool.jpg";
     .text p {
       color: rgb(39, 37, 37);
       font-size: 20px;
-      text-align: center;
+      text-align: justify;
     }
 
     .text button {

@@ -1,5 +1,4 @@
 <?php
-
 include 'connection.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -7,6 +6,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $email = $_POST['email'];
     $phone = $_POST['phone'];
     $password = $_POST['password1'];
+
+    // Hash the password before storing it
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
     // Check if image file is uploaded
     if ($_FILES["image"]["error"] == UPLOAD_ERR_OK) {
@@ -16,10 +18,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         if (move_uploaded_file($_FILES["image"]["tmp_name"], $target_file)) {
             $sql = "INSERT INTO admins (fullname, email, phone, password, images) VALUES (?, ?, ?, ?, ?)";
             $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, "sssss", $fullname, $email, $phone, $password, $target_file);
+            mysqli_stmt_bind_param($stmt, "sssss", $fullname, $email, $phone, $hashed_password, $target_file);
 
             if (mysqli_stmt_execute($stmt)) {
-                $_SESSION['admin_id'] = $admin_id;
+                $_SESSION['admin_id'] = mysqli_insert_id($conn);
                 echo "<script>alert('Admin added successfully');</script>";
                 header("Location: admin.php");
             } else {

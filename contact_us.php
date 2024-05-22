@@ -1,5 +1,5 @@
 <?php
-session_start();
+// session_start();
 include 'nav.php';
 ?>
 <!DOCTYPE html>
@@ -38,7 +38,7 @@ include 'nav.php';
       padding: 20px;
     }
 
-    .contact-info,  .contact-form {
+    .contact-info, .contact-form {
       padding: 30px;
       display: flex;
       flex-wrap: wrap;
@@ -47,7 +47,7 @@ include 'nav.php';
       flex-direction: column;
       row-gap: 20px;
     }
-
+   
     .contact-form form input,
     .contact-form form textarea,
     .contact-form form button {
@@ -60,7 +60,7 @@ include 'nav.php';
       border-radius: 5px !important;
     }
 
-    form button {
+    .button6 {
       background-color: #2b3454;
       color: #fff;
       cursor: pointer;
@@ -86,13 +86,13 @@ include 'nav.php';
       <p>Kathmandu, 44700</p>
       <p>Nepal</p>
     </section>
-    <section class="contact-form">
+    <section >
       <h2>Send us a Message</h2>
-      <form action="#" method="POST">
+      <form action="#" method="POST" class="contact-form">
         <input type="text" name="name" placeholder="Your Name" required>
         <input type="email" name="email" placeholder="Your Email" required>
         <textarea name="message" placeholder="Your Message" required></textarea>
-        <button type="submit">Send</button>
+        <button type="submit" class="button6" >Send</button>
       </form>
     </section>
   </div>

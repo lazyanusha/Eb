@@ -19,8 +19,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $adult = $_POST['adult'];
     $checkIn = $_POST['check-in'];
     $checkOut = $_POST['check-out'];
-    $totalPrice = floatval(str_replace('$', '', $_POST['total-price']));
+    $totalPrice = floatval($_POST['total-price']);
     $paymentMethod = $_POST['payment'];
+    
 
     // Calculate total number of guests
     $totalGuests = $children + $adult;
